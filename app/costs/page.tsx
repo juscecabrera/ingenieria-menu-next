@@ -1,18 +1,36 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CostsEntry from '@/components/CostsEntry'
+import Link from "next/link"
+import CostsTable from '@/components/CostsTable'
 
 const Costs = () => {
   const [showModal, setShowModal] = useState(false)   
   const [costsData, setCostsData] = useState([])
   const [loading, setLoading] = useState(true)
 
+  const fetchCosts = async () => {
+    try {
+      const response = await fetch('/api/costs')
+      const data = await response.json()
+      setCostsData(data.data)
+      setLoading(false)
 
-  const refreshButton = () => {
+      if (!response.ok) throw new Error('Failed to fetch costs');
+    } catch (error) {
+      console.error("Error in useEffect:", error);
+      
+    }
+  }
+
+  useEffect(() => { 
+    fetchCosts()
+  }, [])
+
+  const refreshButton = async () => {
     setLoading(true)
-    //aqui hace el fetch de nuevo
-    // fetchCosts(urlServer, setCostsData, setLoading)
+    fetchCosts()
   }
 
   const handleAddCosts = () => { 
@@ -21,8 +39,9 @@ const Costs = () => {
   
 
   return (
-    <div>
-      <h2>Costos</h2>
+    <div className="p-4">
+      <h2 className="font-bold text-2xl">Costos</h2>
+      <Link href="/">Regresar</Link>
 
       <button className='btn' onClick={() => handleAddCosts()}>Registrar costos</button>
       <button className='btn' onClick={() => refreshButton()}>Actualizar</button>
@@ -33,6 +52,13 @@ const Costs = () => {
           <CostsEntry setShowModal={setShowModal} refreshButton={refreshButton}/>
         </div>
       )}
+
+      <div className="flex justify-center items-center w-full">
+        {loading 
+          ? <span className="loading loading-spinner loading-xl"></span>
+          : <CostsTable costsData={costsData}/>
+        }
+      </div>
     </div>
   )
 }
