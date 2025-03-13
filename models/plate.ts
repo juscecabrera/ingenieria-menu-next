@@ -9,6 +9,10 @@ const PlateSchema = new Schema({
   Precio_plato: { type: Number, required: true },
   Costo_plato: { type: Number, required: true },
   Dias_plato: { type: Number, required: true }
+  //Valor_Venta: Precio final del plato - IGV - Rec_consumo ///// Precio_plato / (1 + IGV + Rec_consumo)
+  //Margen_total: Cantidad_vendida * Rentabilidad
+  //Rentabilidad: Valor_venta - Costo_plato
+  //Ventas totales: Cantidad_vendida * Valor Venta
 }, { timestamps: true });
 
 const Plate = models.Plate || model('Plate', PlateSchema);

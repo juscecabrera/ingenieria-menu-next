@@ -10,9 +10,20 @@ interface InformesCreationProps {
 
 const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refreshButton }) => {
   const [informesData, setInformesData] = useState({
-    Mes: '',
+    Mes_informes: '',
     Informes_category: ''
   });
+
+  /*
+  1. Mandar el mes y la categoria de informes
+  2. Encontrar todos los platos de esa categoria en esos meses
+  3. Crear informe
+  4. Mostrar informe
+  5. Almacenar el informe en otra coleccion de Informes, no Plate ni Costs. 
+  6. Al hacer el fetch en page tiene que hacerlo a la coleccion Informes
+  7. 
+  
+  */
 
 
   const createInforms = async () => { 
@@ -20,15 +31,15 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
       //funciona
       
       
-      // const response = await fetch('/api/informes', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(informesData),
-      // });
+      const response = await fetch('/api/informes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(informesData),
+      });
 
-      // if (!response.ok) throw new Error('Failed to add costs');
+      if (!response.ok) throw new Error('Failed to add costs');
 
 
       setTimeout(() => {
@@ -54,9 +65,9 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
         <legend className="fieldset-legend">Mes</legend>
         <select 
           className="select" 
-          name="Mes" 
+          name="Mes_informes" 
           onChange={(e) => setInformesData(prev => ({...prev, Mes: e.target.value}))}
-          value={informesData.Mes || ''}
+          value={informesData.Mes_informes || ''}
         >
           <option value="" disabled>Seleccione un mes</option>
           <option value="1">Enero</option>
