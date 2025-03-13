@@ -1,20 +1,21 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import CostsEntry from '@/components/CostsEntry'
-import Link from "next/link"
-import CostsTable from '@/components/CostsTable'
+import InformesCreation from '@/components/InformesCreation'
+import InformesResults from '@/components/InformesResults'
+import Link from 'next/link'
+import { useState } from 'react'
 
-const Costs = () => {
-  const [showModal, setShowModal] = useState(false)   
-  const [costsData, setCostsData] = useState([])
+const Informes = () => {
+  const [showModal, setshowModal] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [informesData, setInformesData] = useState([])
+  
 
-  const fetchCosts = async () => {
+  const fetchInformes = async () => {
     try {
-      const response = await fetch('/api/costs')
+      const response = await fetch('/api/informes')
       const data = await response.json()
-      setCostsData(data.data)
+      setInformesData(data.data)
       setLoading(false)
 
       if (!response.ok) throw new Error('Failed to fetch costs');
@@ -22,45 +23,44 @@ const Costs = () => {
       console.error("Error in useEffect:", error);
       
     }
+  } 
+
+
+  const handleAddInformes = () => {
+    setshowModal(prev => true)  
   }
 
-  useEffect(() => { 
-    fetchCosts()
-  }, [])
 
   const refreshButton = async () => {
     setLoading(true)
-    fetchCosts()
+    fetchInformes()
   }
 
-  const handleAddCosts = () => { 
-    setShowModal(!showModal)
-  }    
-  
+
 
   return (
     <div className="p-4">
-      <h2 className="font-bold text-2xl">Costos</h2>
+      <h2 className="font-bold text-2xl">Informes</h2>
       <Link href="/">Regresar</Link>
 
-      <button className='btn' onClick={() => handleAddCosts()}>Registrar costos</button>
+      <button className='btn' onClick={() => handleAddInformes()}>Generar informes</button>
       <button className='btn' onClick={() => refreshButton()}>Actualizar</button>
 
 
       {showModal && (
         <div className='fixed top-0 left-0 w-full h-full bg-black/20 flex justify-center items-center z-50'>
-          <CostsEntry setShowModal={setShowModal} refreshButton={refreshButton}/>
+          <InformesCreation setShowModal={setshowModal} refreshButton={refreshButton}/>
         </div>
       )}
 
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <CostsTable costsData={costsData}/>
+          : <InformesResults />
         }
       </div>
     </div>
   )
 }
 
-export default Costs
+export default Informes

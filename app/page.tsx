@@ -7,6 +7,7 @@ export default function Home() {
       <ul className="menu bg-base-200 rounded-box w-56">
         <li><Link href="/costs">Costos</Link></li>
         <li><Link href="/platos">Platos</Link></li>
+        <li><Link href="/informes">Informes</Link></li>
       </ul>      
     </div>
   );

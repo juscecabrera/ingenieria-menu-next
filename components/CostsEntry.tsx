@@ -68,14 +68,12 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-black grid grid-cols-2 grid-rows-[1fr_1fr_6fr_1fr] gap-x-[5%] gap-y-[2%]">
+    <div className="bg-white p-4 rounded-lg border border-black shadow-xl flex flex-col gap-y-5">
       <h1 className="col-span-2 text-xl font-bold">Registro de Costos Fijos</h1>
       
-      <div className="col-start-2 row-start-2 border border-black rounded-lg flex items-center justify-start p-4">
-        <button className="btn">Nuevo Concepto</button>
-      </div>
+      <button className="btn max-w-48">Nuevo Concepto</button>
 
-      <div className="col-span-2 row-start-3 grid p-4 grid-cols-2 gap-x-5 gap-y-5 my-4 border border-black rounded-lg">
+      <div className="grid p-4 grid-cols-2 gap-x-5 gap-y-5 my-4 border border-black rounded-lg">
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Mes</legend>
           <select 

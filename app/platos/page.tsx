@@ -8,8 +8,8 @@ import Link from 'next/link'
 
 const Platos = () => {
     const [showModal, setshowModal] = useState(false)
-    const [platesData, setPlatesData] = useState([])
     const [loading, setLoading] = useState(true)
+    const [platesData, setPlatesData] = useState([])
 
     const fetchPlates = async () => {
         try {
@@ -44,12 +44,12 @@ const Platos = () => {
       <h2 className="font-bold text-2xl">Platos</h2>
       <Link href="/">Regresar</Link>
 
-      <button className='btn' onClick={() => handleAddPlates()}>Registrar costos</button>
+      <button className='btn' onClick={() => handleAddPlates()}>Registrar platos</button>
       <button className='btn' onClick={() => refreshButton()}>Actualizar</button>
 
 
       {showModal && (
-        <div className='fixed top-0 left-0 w-full h-full bg-black flex justify-center items-center bg-opacity-50'>
+        <div className='fixed top-0 left-0 w-full h-full bg-black/20 flex justify-center items-center z-50'>
           <PlatesEntry setShowModal={setshowModal} refreshButton={refreshButton}/>  
         </div>
       )}

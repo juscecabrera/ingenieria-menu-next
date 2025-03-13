@@ -8,7 +8,7 @@ interface PlatesEntryProps {
 }
 
 const platesEntryTableFields = {
-  'Mes del Plato': 'Mes_plato',
+  // 'Mes del Plato': 'Mes_plato',
   'Categoría': 'Categoria_plato',
   'Nombre del Plato': 'Nombre_plato',
   'Cantidad Vendida': 'Cantidad_vendida_plato',
@@ -17,7 +17,7 @@ const platesEntryTableFields = {
   'Días Disponible': 'Dias_plato'
 } as const;
 
-type PlateField = typeof platesEntryTableFields[keyof typeof platesEntryTableFields] | 'CodInt';
+type PlateField = typeof platesEntryTableFields[keyof typeof platesEntryTableFields] | 'CodInt' | 'Mes_plato';
 
 const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }) => {
   const [plateData, setPlateData] = useState<Partial<Record<PlateField, string>>>({ CodInt: "1" });
@@ -64,10 +64,29 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-black grid grid-cols-2 grid-rows-[1fr_1fr_6fr_1fr] gap-x-[5%] gap-y-[2%]">
+    <div className="bg-white p-6 rounded-2xl border border-black/20 shadow-xl flex flex-col gap-y-5">
       <h1 className="col-span-2 text-xl font-bold">Registro de Platos</h1>
       
-      <div className="col-span-2 row-start-3 grid p-4 grid-cols-2 gap-x-5 gap-y-5 my-4 border border-black rounded-lg">
+      <div className="col-span-2 row-start-3 grid p-4 grid-cols-2 gap-x-5 gap-y-5 border border-black rounded-lg">
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Mes</legend>
+          <select 
+            className="select" 
+            name="Mes_plato" 
+            value={plateData.Mes_plato || ''} 
+            onChange={handleChange}
+          >
+            <option value="" disabled>Seleccione un mes</option>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i + 1} value={String(i + 1)}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+        </fieldset>
+
+
         {Object.entries(platesEntryTableFields).map(([key, value]) => (
           <fieldset key={value} className="fieldset">
             <legend className="fieldset-legend">{key}</legend>
