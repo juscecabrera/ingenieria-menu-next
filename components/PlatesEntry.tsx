@@ -12,8 +12,8 @@ const platesEntryTableFields = {
   'Categoría': 'Categoria_plato',
   'Nombre del Plato': 'Nombre_plato',
   'Cantidad Vendida': 'Cantidad_vendida_plato',
-  'Precio': 'Precio_plato',
   'Costo': 'Costo_plato',
+  'Precio': 'Precio_plato',
   'Días Disponible': 'Dias_plato'
 } as const;
 

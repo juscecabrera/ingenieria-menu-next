@@ -3,12 +3,20 @@ import Plate from "@/models/plate";
 
 //Valor de Venta = precio final sin impuestos ni recargo por consumo
 
-export const executeInform = (Mes_informes: string, Informes_category: string) => {
+export const executeInform = async (Mes_informes: string, Informes_category: string) => {
     // 1. Recibir el mes y la categoria de informes
     // 2. Encontrar todos los platos de esa categoria en esos meses
-    // 3. 
 
     const data = Plate.find({ Mes_plato: Mes_informes, Categoria_plato: Informes_category })
+
+    //data artificial
+    //la data viene del find de MongoDB
+    const valoresVentas = [1,2,3]
+    const cantidadesVendidas = [1,2,3]
+
+
+    const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
+
 
     return data
 }
@@ -151,7 +159,26 @@ export const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : Omnes
     }
 
     return omnesResult
-
 }
+
+export const BCGPop = async ({}) => {
+    /*
+    2do informe: BCG
+
+    Mide dos variables POR PLATO: 
+        1. Popularidad: % de platos vendidos que el plato representa sobre el total. 
+            -  Alta: popularidad >=  % promedio
+            -   Baja: popularidad <  % promedio
+            Calculo: (Cantidad_vendida / SUM(Cantidad_vendida)) * 100%
+        2. Rentabilidad: Valor de venta - Costo unitario
+            - Alta: mayor a 15 soles (consultar con Rodrigo)
+            - Baja: menor a 15 soles 
+            Posiblemente es un % del valor de venta, revisar despues
+            Calculo: (Valor_Venta - Costo)
+    */
+
+
+    
+} 
 
 
