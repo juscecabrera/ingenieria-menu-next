@@ -1,8 +1,11 @@
 import React from 'react'
 
-const InformesResults = () => {
+const InformesResults = ({ informesData }: any) => {
   return (
-    <div>InformesResults</div>
+    <div>
+      InformesResults
+      {JSON.stringify(informesData)}
+    </div>
   )
 }
 

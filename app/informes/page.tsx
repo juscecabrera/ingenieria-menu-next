@@ -1,16 +1,15 @@
 'use client'
 
+import Link from 'next/link'
 import InformesCreation from '@/components/InformesCreation'
 import InformesResults from '@/components/InformesResults'
-import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Informes = () => {
   const [showModal, setshowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [informesData, setInformesData] = useState([])
   
-
   const fetchInformes = async () => {
     try {
       const response = await fetch('/api/informes')
@@ -25,18 +24,18 @@ const Informes = () => {
     }
   } 
 
+  useEffect(() => { 
+    fetchInformes()
+  }, [])
 
   const handleAddInformes = () => {
     setshowModal(prev => true)  
   }
 
-
   const refreshButton = async () => {
     setLoading(true)
     fetchInformes()
   }
-
-
 
   return (
     <div className="p-4">
@@ -56,7 +55,7 @@ const Informes = () => {
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <InformesResults />
+          : <InformesResults informesData={informesData}/>
         }
       </div>
     </div>

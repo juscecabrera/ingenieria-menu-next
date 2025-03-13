@@ -8,11 +8,6 @@ Ponerle el modelo de Informes, no de Plates
 */
 
 
-
-
-
-
-
 // 📌 POST: Crear un nuevo plato
 export async function POST(req: NextRequest) {
   try {
@@ -35,8 +30,9 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     await connectToDatabase();
-    const plates = await Plate.find();
-    return NextResponse.json({ message: 'Plates retrieved successfully', data: plates }, { status: 200 });
+    // const plates = await Plate.find();
+    const informes = {}
+    return NextResponse.json({ message: 'Plates retrieved successfully', data: informes }, { status: 200 });
   } catch (error) {
     console.error('❌ Error fetching plates:', error);
     return NextResponse.json({ message: 'Error fetching plates', error }, { status: 500 });
