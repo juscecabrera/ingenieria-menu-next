@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, models } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 const PlateSchema = new Schema({
   CodInt: { type: Number, required: true },

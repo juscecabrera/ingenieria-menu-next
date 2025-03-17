@@ -11,12 +11,14 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
 
     //data artificial
     //la data viene del find de MongoDB
-    const valoresVentas = [1,2,3]
-    const cantidadesVendidas = [1,2,3]
+    const valoresVentas: number[] = [1,2,3]
+    const cantidadesVendidas: number[] = [1,2,3]
+    const rentabilidadPorPlato: number[] = [1,2,3]
+    const cantidadVendidaTotalAcumulada : number = cantidadesVendidas.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);    
 
 
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
-
+    const BCGResult = await BCGPop({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas })
 
     return data
 }
@@ -161,7 +163,16 @@ export const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : Omnes
     return omnesResult
 }
 
-export const BCGPop = async ({}) => {
+
+interface BCGPopProps {
+    rentabilidadPorPlato: number[]
+    cantidadVendidaTotalAcumulada: number
+    cantidadesVendidas: number[]
+}
+
+type BCGClassification = "Estrella" | "Impopular" | "Popular" | "Perdedor"
+
+export const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas }: BCGPopProps): Promise<BCGClassification[]>  => {
     /*
     2do informe: BCG
 
@@ -175,10 +186,36 @@ export const BCGPop = async ({}) => {
             - Baja: menor a 15 soles 
             Posiblemente es un % del valor de venta, revisar despues
             Calculo: (Valor_Venta - Costo)
+
+    Necesita:
+        - cantidad de platos vendidos acumulados totales (todos los platos)
+        - cantidad de platos vendidos por plato
+        - rentabilidad por plato
     */
 
-
+    const numeroPlatos = cantidadesVendidas.length
+    const promedioPopularidad = 100 / numeroPlatos // Equal distribution percentage
     
+    const resultados: BCGClassification[] = cantidadesVendidas.map((cantidad, index) => {
+        const popularidadPorcentaje = (cantidad / cantidadVendidaTotalAcumulada) * 100
+        
+        const popularidad = popularidadPorcentaje >= promedioPopularidad ? "Alta" : "Baja"
+        
+        //no estoy 100% seguro que sea 15 soles el limite de rentabilidad, de repente es % de valor de venta
+        const rentabilidad = rentabilidadPorPlato[index] >= 15 ? "Alta" : "Baja"
+        
+        if (popularidad === "Alta" && rentabilidad === "Alta") {
+            return "Estrella"
+        } else if (popularidad === "Baja" && rentabilidad === "Alta") {
+            return "Impopular"
+        } else if (popularidad === "Alta" && rentabilidad === "Baja") {
+            return "Popular"
+        } else {
+            return "Perdedor"
+        }
+    })
+    
+    return resultados
 } 
 
 

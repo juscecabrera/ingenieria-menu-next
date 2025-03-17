@@ -21,7 +21,6 @@ interface PlatesTableProps {
 const PlatesTable: React.FC<PlatesTableProps> = ({ platesData }) => {
   return (
     <>
-      {JSON.stringify(platesData)}
       <table className='table table-lg w-1/2'>
         <thead>
           <tr>
