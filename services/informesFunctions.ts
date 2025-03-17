@@ -10,13 +10,17 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     // 4. Ejecutar los informes
     // 5. Retornar los resultados
 
+    //1. Data recibida por props
+
+    //2. Encontrar data
     const data = Plate.find({ Mes_plato: Mes_informes, Categoria_plato: Informes_category })
 
-    //la data viene del find de MongoDB
+    //3. Separar la data
     //data artificial
     const valoresVentas: number[] = [1,2,3]
 
     const cantidadesVendidas: number[] = [1,2,3]
+    const cantidadesVendidasPromedio: number = Number((cantidadesVendidas.reduce((acc, curr) => acc + curr, 0) / cantidadesVendidas.length).toFixed(2))
     const cantidadVendidaTotalAcumulada : number = cantidadesVendidas.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
     
     const ventasTotalesPorPlato: number[] = [1,2,3] //Ventas_Total en modelo Plate: valoresVentas * cantidadesVendidas
@@ -25,6 +29,7 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     const rentabilidadPorPlato: number[] = [1,2,3]
     const rentabilidadPorPlatoPromedio: number = rentabilidadPorPlato.reduce((acc, curr) => acc + curr, 0) / rentabilidadPorPlato.length; //promedio de rentabilidadPorPlato
     const rentabilidadPorPlatoTotal: number[] = [1,2,3] //cantidadVendida * rentabilidadPorPlato
+    const rentabilidadPorPlatoTotalPromedio: number = rentabilidadPorPlatoTotal.reduce((acc, curr) => acc + curr, 0) / rentabilidadPorPlato.length; //promedio de rentabilidadPorPlatoTotal
     const rentabilidadPorPlatoTotalAcumulada : number = rentabilidadPorPlatoTotal.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);  
 
     const diasPlato: number[] = [1,2,3]
@@ -33,14 +38,16 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     const costoUnitarioPorPlato: number[] = [1,2,3]
     const costoUnitarioPorPlatoPromedio: number = Number((costoUnitarioPorPlato.reduce((acc, curr) => acc + curr, 0) / costoUnitarioPorPlato.length).toFixed(2)); //promedio de costoUnitarioPorPlato
 
-    //informes
+    //4. Ejecutar los informes
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
     const BCGResult = await BCGPop({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas })
     const ADLResult = await ADL({ cantidadesVendidas, rentabilidadPorPlato })
     const IRPResult = await IRP({ ventasTotalesPorPlato, ventasTotalesPorPlatoAcumuladas, rentabilidadPorPlatoTotal, rentabilidadPorPlatoTotalAcumulada })
     const indicePopularidadResult = await IndexPopularidad({ diasPlato, diasPlatoAcumulados, cantidadesVendidas, cantidadVendidaTotalAcumulada })
     const CostoMargenResult = await CostoMargen({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio })
-
+    const MillerResult = await Miller({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, cantidadesVendidas, cantidadesVendidasPromedio })    
+    const UmanResult = await Uman({ rentabilidadPorPlato, rentabilidadPorPlatoPromedio, rentabilidadPorPlatoTotal, rentabilidadPorPlatoTotalPromedio })
+    //5. Retornar los resultados
     return data
 }
 
@@ -49,7 +56,7 @@ interface OmnesFunctionProps {
     cantidadesVendidas: number[] //array de las cantidades vendidas de los platos en el mes y categoria indicados
 }
 
-export const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctionProps) => {
+ const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctionProps) => {
     //4 principios
 
     /*
@@ -192,7 +199,7 @@ interface BCGPopProps {
 
 type BCGClassification = "Estrella" | "Impopular" | "Popular" | "Perdedor"
 
-export const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas }: BCGPopProps): Promise<BCGClassification[]>  => {
+ const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas }: BCGPopProps): Promise<BCGClassification[]>  => {
     /*
     2do informe: BCG
 
@@ -248,7 +255,7 @@ type ADLResult = [
     "Dominante" | "Fuerte" | "Favorable" | "Debil" | "Marginal"
 ] //la primera categoria es Rentabilidad, la segunda es Cantidad Vendida
 
-export const ADL = async ({ cantidadesVendidas, rentabilidadPorPlato }: ADLProps): Promise<ADLResult[]> => {
+ const ADL = async ({ cantidadesVendidas, rentabilidadPorPlato }: ADLProps): Promise<ADLResult[]> => {
     /*
     3er informe: ADL
      
@@ -332,7 +339,7 @@ interface IRPProps {
 
 type IRPResult = number[]
 
-export const IRP = async ({ ventasTotalesPorPlato, ventasTotalesPorPlatoAcumuladas, rentabilidadPorPlatoTotalAcumulada, rentabilidadPorPlatoTotal }: IRPProps):Promise<IRPResult> => {
+ const IRP = async ({ ventasTotalesPorPlato, ventasTotalesPorPlatoAcumuladas, rentabilidadPorPlatoTotalAcumulada, rentabilidadPorPlatoTotal }: IRPProps):Promise<IRPResult> => {
     /* 4to informe: IRP
 
     % de margen = rentabilidadPorPlatoTotal / rentabilidadPorPlatoTotalAcumulada
@@ -369,7 +376,7 @@ interface IndexPopularidadProps {
 
 type IndexPopularidadResult = number[]
 
-export const IndexPopularidad = async ({ diasPlato, diasPlatoAcumulados, cantidadesVendidas, cantidadVendidaTotalAcumulada }: IndexPopularidadProps): Promise<IndexPopularidadResult> => {
+ const IndexPopularidad = async ({ diasPlato, diasPlatoAcumulados, cantidadesVendidas, cantidadVendidaTotalAcumulada }: IndexPopularidadProps): Promise<IndexPopularidadResult> => {
     /*
     5to informe
 
@@ -404,7 +411,7 @@ interface CostoMargenProps {
 
 type CostoMargenResult = ("Selecto" | "Estandar" | "Durmiente" | "Problema")[]
 
-export const CostoMargen = async ({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: CostoMargenProps): Promise<CostoMargenResult> => {
+ const CostoMargen = async ({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: CostoMargenProps): Promise<CostoMargenResult> => {
     /*
     6to informe
 
@@ -433,14 +440,14 @@ export const CostoMargen = async ({ costoUnitarioPorPlato, costoUnitarioPorPlato
         const costoBajo = costo < costoUnitarioPorPlatoPromedio
         
         // Determine profitability classification
-        const rentabilidadAlta = rentabilidad >= rentabilidadPorPlatoPromedio
+        const cantidadVendidaAlta = rentabilidad >= rentabilidadPorPlatoPromedio
         
         // Determine classification based on cost and profitability
-        if (costoBajo && rentabilidadAlta) {
+        if (costoBajo && cantidadVendidaAlta) {
             return "Selecto"
-        } else if (!costoBajo && rentabilidadAlta) {
+        } else if (!costoBajo && cantidadVendidaAlta) {
             return "Estandar"
-        } else if (costoBajo && !rentabilidadAlta) {
+        } else if (costoBajo && !cantidadVendidaAlta) {
             return "Durmiente"
         } else {
             return "Problema"
@@ -450,3 +457,172 @@ export const CostoMargen = async ({ costoUnitarioPorPlato, costoUnitarioPorPlato
     return clasificaciones
 }
 
+interface MillerProps {
+    costoUnitarioPorPlato: number[]
+    costoUnitarioPorPlatoPromedio: number
+    cantidadesVendidas: number[]
+    cantidadesVendidasPromedio: number
+
+}
+
+type MillerResult = ("Ganador" | "MarginalAlto" | "MarginalBajo" | "Perdedor")[]
+
+const Miller = async ({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, cantidadesVendidas, cantidadesVendidasPromedio }: MillerProps): Promise<MillerResult> => {
+    /*
+    7mo informe
+    
+    - Costo Unitario Por Plato
+    - Costo Unitario Por Plato Promedio
+    - Cantidades Vendidas
+    - Cantidades Vendidas Promedio
+
+    Si Costo Unitario menor al Costo unitario Promedio, es Costo de Alimentos Bajo
+    Si Cantidades Vendidas menor a Cantidades Vendidas Promedio, es Cantidad Vendida Bajo
+
+    Costo || Cantidad Vendida || Clasificacion
+    Bajo || Alto || Ganador
+    Alto || Alto || MarginalAlto
+    Bajo || Bajo || MarginalBajo
+    Alto || Bajo || Perdedor
+    */
+
+    const clasificaciones: MillerResult = costoUnitarioPorPlato.map((costo, index) => {
+        const cantidadVendida = cantidadesVendidas[index]
+        
+        // Determine cost classification
+        const costoBajo = costo < costoUnitarioPorPlatoPromedio
+        
+        // Determine profitability classification
+        const cantidadVendidaAlta = cantidadVendida >= cantidadesVendidasPromedio
+        
+        // Determine classification based on cost and profitability
+        if (costoBajo && cantidadVendidaAlta) {
+            return "Ganador"
+        } else if (!costoBajo && cantidadVendidaAlta) {
+            return "MarginalAlto"
+        } else if (costoBajo && !cantidadVendidaAlta) {
+            return "MarginalBajo"
+        } else {
+            return "Perdedor"
+        }
+    })
+
+    return clasificaciones
+}
+
+interface UmanProps {
+    rentabilidadPorPlato: number[]
+    rentabilidadPorPlatoPromedio: number
+    rentabilidadPorPlatoTotal: number[]
+    rentabilidadPorPlatoTotalPromedio: number
+}
+
+type UmanResult = ("Potencial" | "Bandera" | "Perdedor" | "DificilVender")[]
+
+const Uman = async ({ rentabilidadPorPlato, rentabilidadPorPlatoPromedio, rentabilidadPorPlatoTotal, rentabilidadPorPlatoTotalPromedio }: UmanProps) => {
+    /*
+    8vo informe
+    - Rentabilidad Por Plato Total Promedio
+    - Rentabilidad Por Plato Total: si es mayor al promedio es Alto, sino Bajo
+    - Rentabilidad Por Plato: si es mayor al promedio es Alto, sino Bajo
+    
+    Rentabilidad Por Plato Total || Rentabilidad Por Plato || Clasificacion
+    Alto || Bajo || Potencial
+    Alto || Alto || Bandera
+    Bajo || Bajo || Perdedor
+    Bajo || Alto || Dificil de Vender
+    */
+
+    const clasificaciones: UmanResult = rentabilidadPorPlato.map((rentabilidad, index) => {
+        const rentabilidadUnitariaTotal = rentabilidadPorPlatoTotal[index]
+        
+        // Determine cost classification
+        const rentabilidadBajo = rentabilidad < rentabilidadPorPlatoPromedio
+        
+        // Determine profitability classification
+        const rentabilidadTotalAlta = rentabilidadUnitariaTotal >= rentabilidadPorPlatoTotalPromedio
+        
+        // Determine classification based on cost and profitability
+        if (rentabilidadBajo && rentabilidadTotalAlta) {
+            return "Potencial"
+        } else if (!rentabilidadBajo && rentabilidadTotalAlta) {
+            return "Bandera"
+        } else if (rentabilidadBajo && !rentabilidadTotalAlta) {
+            return "Perdedor"
+        } else {
+            return "DificilVender"
+        }
+    })
+
+    return clasificaciones
+}
+
+
+
+interface MerrickProps {
+    cantidadesVendidas: number[]
+    cantidadesVendidasPromedio: number
+    rentabilidadPorPlato: number[]
+    rentabilidadPorPlatoPromedio: number
+}
+
+type MerrickResult = ("A" | "B" | "C" | "D")[]
+
+const Merrick = async ({ cantidadesVendidas, cantidadesVendidasPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: MerrickProps): Promise<MerrickResult> => {
+    /*
+    9no informe:
+    - Rentabilidad Por Plato: mayor al promedio es Alto, sino es Bajo
+    - Cantidad Vendida: mayor al promedio es Alto, sino Bajo
+
+    Rentabilidad Por Plato || Cantidad Vendida || Clasificacion
+    Alto || Alto || A
+    Bajo || Alto || B
+    Alto || Bajo || C
+    Bajo || Bajo || D
+    */ 
+
+
+    const clasificaciones: MerrickResult = rentabilidadPorPlato.map((rentabilidad, index) => {
+        const cantidadVendida = cantidadesVendidas[index]
+        
+        // Determine cost classification
+        const rentabilidadBajo = rentabilidad < rentabilidadPorPlatoPromedio
+        
+        // Determine profitability classification
+        const cantidadVendidaAlta = cantidadVendida >= cantidadesVendidasPromedio
+        
+        // Determine classification based on cost and profitability
+        if (!rentabilidadBajo && cantidadVendidaAlta) {
+            return "A"
+        } else if (rentabilidadBajo && cantidadVendidaAlta) {
+            return "B"
+        } else if (!rentabilidadBajo && !cantidadVendidaAlta) {
+            return "C"
+        } else {
+            return "D"
+        }
+    })
+    return clasificaciones
+}
+
+interface PuntoEquilibrioProps {
+
+}
+
+type PuntoEquilibrioResult = number
+
+const PuntoEquilibrio = async ({}) => {
+
+}
+
+
+const multiCriterio = async ({}) => {
+    /*
+    BCG, Costo-Margen, Miller, Uman, Merrick
+
+
+
+
+    
+    */
+}
