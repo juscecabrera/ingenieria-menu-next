@@ -38,6 +38,8 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     const costoUnitarioPorPlato: number[] = [1,2,3]
     const costoUnitarioPorPlatoPromedio: number = Number((costoUnitarioPorPlato.reduce((acc, curr) => acc + curr, 0) / costoUnitarioPorPlato.length).toFixed(2)); //promedio de costoUnitarioPorPlato
 
+    const costosFijos = 14180 //artificial
+
     //4. Ejecutar los informes
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
     const BCGResult = await BCGPop({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas })
@@ -47,7 +49,12 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     const CostoMargenResult = await CostoMargen({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio })
     const MillerResult = await Miller({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, cantidadesVendidas, cantidadesVendidasPromedio })    
     const UmanResult = await Uman({ rentabilidadPorPlato, rentabilidadPorPlatoPromedio, rentabilidadPorPlatoTotal, rentabilidadPorPlatoTotalPromedio })
+    const MerrickResult = await Merrick({ cantidadesVendidas, cantidadesVendidasPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }) 
+    const PuntoEquilibrioResult = await PuntoEquilibrio({ costosFijos, rentabilidadPorPlato, rentabilidadPorPlatoPromedio })
+    const MultiCriterioResult = await multiCriterio({ BCGResult, CostoMargenResult, MillerResult, UmanResult, MerrickResult})
+    
     //5. Retornar los resultados
+
     return data
 }
 
@@ -197,9 +204,9 @@ interface BCGPopProps {
     cantidadesVendidas: number[]
 }
 
-type BCGClassification = "Estrella" | "Impopular" | "Popular" | "Perdedor"
+type BCGResult = ("Estrella" | "Impopular" | "Popular" | "Perdedor")[]
 
- const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas }: BCGPopProps): Promise<BCGClassification[]>  => {
+ const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas }: BCGPopProps): Promise<BCGResult>  => {
     /*
     2do informe: BCG
 
@@ -223,7 +230,7 @@ type BCGClassification = "Estrella" | "Impopular" | "Popular" | "Perdedor"
     const numeroPlatos = cantidadesVendidas.length
     const promedioPopularidad = 100 / numeroPlatos // Equal distribution percentage
     
-    const resultados: BCGClassification[] = cantidadesVendidas.map((cantidad, index) => {
+    const resultados: BCGResult = cantidadesVendidas.map((cantidad, index) => {
         const popularidadPorcentaje = (cantidad / cantidadVendidaTotalAcumulada) * 100
         
         const popularidad = popularidadPorcentaje >= promedioPopularidad ? "Alta" : "Baja"
@@ -558,7 +565,6 @@ const Uman = async ({ rentabilidadPorPlato, rentabilidadPorPlatoPromedio, rentab
 }
 
 
-
 interface MerrickProps {
     cantidadesVendidas: number[]
     cantidadesVendidasPromedio: number
@@ -606,23 +612,157 @@ const Merrick = async ({ cantidadesVendidas, cantidadesVendidasPromedio, rentabi
 }
 
 interface PuntoEquilibrioProps {
-
+    costosFijos: number
+    rentabilidadPorPlato: number[]
+    rentabilidadPorPlatoPromedio: number
 }
 
-type PuntoEquilibrioResult = number
+type PuntoEquilibrioResult = number[]
 
-const PuntoEquilibrio = async ({}) => {
-
-}
-
-
-const multiCriterio = async ({}) => {
+const PuntoEquilibrio = async ({ costosFijos, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: PuntoEquilibrioProps) : Promise<PuntoEquilibrioResult> => {
     /*
+    10mo informe
+
+    PuntoEquilibrio(Qe):number = Costos Fijos / Margen de Contribucion Promedio = Cantidad de Platos por vender para cubrir costos fijos
+
+    - Costos Fijos
+    - Rentabilidad por Plato
+
+
+    No asume que siempre se puede llegar exactamente a costos fijos pero se mantiene en un rango de 1 a 5 rentabilidades minimas. 
+    Se mantiene lo mas cerca posible a la 
+    */
+
+   // Calcular el punto de equilibrio total (Qe) usando la rentabilidad promedio proporcionada
+   const qeTotal = costosFijos / rentabilidadPorPlatoPromedio
+
+   // Calcular la suma total de rentabilidad para el cálculo de proporciones
+   const sumaRentabilidad = rentabilidadPorPlato.reduce((sum, val) => sum + val, 0)
+
+   // Distribución inicial proporcional (usando floor para empezar por debajo o igual)
+   const cantidadesPorPlato: number[] = rentabilidadPorPlato.map(rentabilidad => {
+       const proporcion = rentabilidad / sumaRentabilidad
+       return Math.floor(qeTotal * proporcion)
+   })
+
+   // Calcular la contribución actual con la distribución inicial
+   let contribuciónActual = cantidadesPorPlato.reduce((sum, qty, index) => 
+       sum + qty * rentabilidadPorPlato[index], 0)
+
+   // Definir el rango aceptable de diferencia (1 a 5 platos en términos de contribución)
+   const minRentabilidad = Math.min(...rentabilidadPorPlato)
+   const maxDiferencia = 5 * minRentabilidad // Máximo 5 platos de la rentabilidad más baja
+
+   // Ajustar las cantidades para acercarse lo más posible a costosFijos
+   while (contribuciónActual < costosFijos) {
+       // Encontrar el plato que nos acerque más a costosFijos sin exceder demasiado
+       let mejorIndice = -1
+       let mejorDiferencia = Infinity
+
+       for (let i = 0; i < rentabilidadPorPlato.length; i++) {
+           const nuevaContribución = contribuciónActual + rentabilidadPorPlato[i]
+           const diferencia = Math.abs(nuevaContribución - costosFijos)
+           if (diferencia < mejorDiferencia && nuevaContribución <= costosFijos + maxDiferencia) {
+               mejorDiferencia = diferencia
+               mejorIndice = i
+           }
+       }
+
+       // Si no hay mejora posible sin exceder el rango, salir del bucle
+       if (mejorIndice === -1) break
+
+       // Incrementar la cantidad del mejor plato
+       cantidadesPorPlato[mejorIndice]++
+       contribuciónActual += rentabilidadPorPlato[mejorIndice]
+
+       // Verificar si estamos dentro del rango aceptable
+       const diferenciaActual = Math.abs(contribuciónActual - costosFijos)
+       if (diferenciaActual <= maxDiferencia) break
+   }
+
+   // Si aún estamos por debajo, ajustar para superar ligeramente si es necesario
+   if (contribuciónActual < costosFijos) {
+       let mejorIndice = 0
+       let menorExceso = Infinity
+       for (let i = 0; i < rentabilidadPorPlato.length; i++) {
+           const exceso = rentabilidadPorPlato[i] - (costosFijos - contribuciónActual)
+           if (exceso >= 0 && exceso < menorExceso) {
+               menorExceso = exceso
+               mejorIndice = i
+           }
+       }
+       cantidadesPorPlato[mejorIndice]++
+       contribuciónActual += rentabilidadPorPlato[mejorIndice]
+   }
+
+   return cantidadesPorPlato as PuntoEquilibrioResult
+}
+
+interface MultiCriterioProps {
+    BCGResult: BCGResult
+    CostoMargenResult: CostoMargenResult
+    MillerResult: MillerResult
+    UmanResult: UmanResult
+    MerrickResult: MerrickResult
+}
+
+// Tipo de retorno
+type MultiCriterioResult = number[]
+
+const multiCriterio = async ({ BCGResult, CostoMargenResult, MillerResult, UmanResult, MerrickResult }: MultiCriterioProps): Promise<MultiCriterioResult> => {
+   /*
     BCG, Costo-Margen, Miller, Uman, Merrick
 
-
-
-
-    
+    Suma los puntajes de cada informe para cada plato. Minimo de 5, maximo de 20. 
     */
+
+    // Mapas de puntajes para cada clasificación
+    const bcgPuntajes: Record<string, number> = {
+        "Estrella": 4,
+        "Impopular": 3,
+        "Popular": 2,
+        "Perdedor": 1
+    }
+
+    const costoMargenPuntajes: Record<string, number> = {
+        "Selecto": 4,
+        "Estandar": 3,
+        "Durmiente": 2,
+        "Problema": 1
+    }
+
+    const millerPuntajes: Record<string, number> = {
+        "Ganador": 4,
+        "MarginalAlto": 3,
+        "MarginalBajo": 2,
+        "Perdedor": 1
+    }
+
+    const umanPuntajes: Record<string, number> = {
+        "Potencial": 4,
+        "Bandera": 3,
+        "Perdedor": 2,
+        "DificilVender": 1
+    }
+
+    const merrickPuntajes: Record<string, number> = {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 1
+    }
+
+    // Calcular el puntaje total para cada plato
+    const puntajesTotales: MultiCriterioResult = BCGResult.map((_, index) => {
+        const bcgPuntaje = bcgPuntajes[BCGResult[index]]
+        const costoMargenPuntaje = costoMargenPuntajes[CostoMargenResult[index]]
+        const millerPuntaje = millerPuntajes[MillerResult[index]]
+        const umanPuntaje = umanPuntajes[UmanResult[index]]
+        const merrickPuntaje = merrickPuntajes[MerrickResult[index]]
+
+        // Sumar todos los puntajes para este plato
+        return bcgPuntaje + costoMargenPuntaje + millerPuntaje + umanPuntaje + merrickPuntaje
+    })
+
+    return puntajesTotales
 }
