@@ -6,19 +6,40 @@ import Plate from "@/models/plate";
 export const executeInform = async (Mes_informes: string, Informes_category: string) => {
     // 1. Recibir el mes y la categoria de informes
     // 2. Encontrar todos los platos de esa categoria en esos meses
+    // 3. Separar la data 
+    // 4. Ejecutar los informes
+    // 5. Retornar los resultados
 
     const data = Plate.find({ Mes_plato: Mes_informes, Categoria_plato: Informes_category })
 
-    //data artificial
     //la data viene del find de MongoDB
+    //data artificial
     const valoresVentas: number[] = [1,2,3]
+
     const cantidadesVendidas: number[] = [1,2,3]
+    const cantidadVendidaTotalAcumulada : number = cantidadesVendidas.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
+    
+    const ventasTotalesPorPlato: number[] = [1,2,3] //Ventas_Total en modelo Plate: valoresVentas * cantidadesVendidas
+    const ventasTotalesPorPlatoAcumuladas: number = ventasTotalesPorPlato.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
+
     const rentabilidadPorPlato: number[] = [1,2,3]
-    const cantidadVendidaTotalAcumulada : number = cantidadesVendidas.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);    
+    const rentabilidadPorPlatoPromedio: number = rentabilidadPorPlato.reduce((acc, curr) => acc + curr, 0) / rentabilidadPorPlato.length; //promedio de rentabilidadPorPlato
+    const rentabilidadPorPlatoTotal: number[] = [1,2,3] //cantidadVendida * rentabilidadPorPlato
+    const rentabilidadPorPlatoTotalAcumulada : number = rentabilidadPorPlatoTotal.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);  
 
+    const diasPlato: number[] = [1,2,3]
+    const diasPlatoAcumulados: number = diasPlato.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
 
+    const costoUnitarioPorPlato: number[] = [1,2,3]
+    const costoUnitarioPorPlatoPromedio: number = Number((costoUnitarioPorPlato.reduce((acc, curr) => acc + curr, 0) / costoUnitarioPorPlato.length).toFixed(2)); //promedio de costoUnitarioPorPlato
+
+    //informes
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
     const BCGResult = await BCGPop({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas })
+    const ADLResult = await ADL({ cantidadesVendidas, rentabilidadPorPlato })
+    const IRPResult = await IRP({ ventasTotalesPorPlato, ventasTotalesPorPlatoAcumuladas, rentabilidadPorPlatoTotal, rentabilidadPorPlatoTotalAcumulada })
+    const indicePopularidadResult = await IndexPopularidad({ diasPlato, diasPlatoAcumulados, cantidadesVendidas, cantidadVendidaTotalAcumulada })
+    const CostoMargenResult = await CostoMargen({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio })
 
     return data
 }
@@ -163,7 +184,6 @@ export const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : Omnes
     return omnesResult
 }
 
-
 interface BCGPopProps {
     rentabilidadPorPlato: number[]
     cantidadVendidaTotalAcumulada: number
@@ -218,4 +238,215 @@ export const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumula
     return resultados
 } 
 
+interface ADLProps {
+    cantidadesVendidas: number[]
+    rentabilidadPorPlato: number[]
+}
+
+type ADLResult = [
+    "Crecimiento" | "Introduccion" | "Madurez" | "Declinacion",
+    "Dominante" | "Fuerte" | "Favorable" | "Debil" | "Marginal"
+] //la primera categoria es Rentabilidad, la segunda es Cantidad Vendida
+
+export const ADL = async ({ cantidadesVendidas, rentabilidadPorPlato }: ADLProps): Promise<ADLResult[]> => {
+    /*
+    3er informe: ADL
+     
+    1. Margen de Contribucion: level size = (mayor margen - menor margen) / 4
+        Crecimiento: [..., mayor margen]
+        Introduccion: [...]
+        Madurez: [...]
+        Declinacion: [menor margen, menor margen + level size]
+
+    2. Cantidad vendida: level size = (mayor cantidad de ventas - menor cantidad de ventas) / 5
+        Dominante: [..., mayor cantidad de ventas]
+        Fuerte: [...]
+        Favorable: [...]
+        Debil: [...]
+        Marginal: [menor cantidad de ventas, menor cantidad de ventas + level size]
+
+    Cada plato tiene dos atributos: margen de contribucion y cantidad vendida
+    */
+
+    const CVA = Math.max(...cantidadesVendidas)
+    const CVB = Math.min(...cantidadesVendidas)
+    const maxRent = Math.max(...rentabilidadPorPlato)
+    const minRent = Math.min(...rentabilidadPorPlato)
+
+
+    const CantidadVentasSize = (CVA - CVB) / 5
+
+    const RentabilidadSize = (maxRent - minRent) / 4
+
+    //Rentabilidad
+    const Crecimiento = [minRent +  (3 * RentabilidadSize),  maxRent]
+    const Introduccion = [minRent +  (2 * RentabilidadSize),  minRent +  (3 * RentabilidadSize)]
+    const Madurez = [minRent + RentabilidadSize,  minRent +  (2 * RentabilidadSize)]
+    const Declinacion = [minRent, minRent + RentabilidadSize]
+
+
+    //Cantidad Vendida
+    const Dominante = [CVB + (4 * CantidadVentasSize), CVA]
+    const Fuerte = [CVB + (3 * CantidadVentasSize), CVB + (4 * CantidadVentasSize)]
+    const Favorable = [CVB + (2 * CantidadVentasSize), CVB + (3 * CantidadVentasSize)]
+    const Debil = [CVB + CantidadVentasSize, CVB + (2 *CantidadVentasSize)]
+    const Marginal = [CVB, CVB + CantidadVentasSize]
+
+    // Function to classify rentability
+    const classifyRentability = (value: number): "Crecimiento" | "Introduccion" | "Madurez" | "Declinacion" => {
+        if (value >= Crecimiento[0] && value <= Crecimiento[1]) return "Crecimiento"
+        if (value >= Introduccion[0] && value < Introduccion[1]) return "Introduccion"
+        if (value >= Madurez[0] && value < Madurez[1]) return "Madurez"
+        return "Declinacion"
+    }
+
+    // Function to classify sales quantity
+    const classifySales = (value: number): "Dominante" | "Fuerte" | "Favorable" | "Debil" | "Marginal" => {
+        if (value >= Dominante[0] && value <= Dominante[1]) return "Dominante"
+        if (value >= Fuerte[0] && value < Fuerte[1]) return "Fuerte"
+        if (value >= Favorable[0] && value < Favorable[1]) return "Favorable"
+        if (value >= Debil[0] && value < Debil[1]) return "Debil"
+        return "Marginal"
+    }
+
+    // Map through the arrays and classify each dish
+    const resultados: ADLResult[] = cantidadesVendidas.map((cantidad, index) => {
+        const rentabilidad = rentabilidadPorPlato[index]
+        return [
+            classifyRentability(rentabilidad),
+            classifySales(cantidad)
+        ] as ADLResult
+    })
+
+    return resultados
+
+    
+}
+
+interface IRPProps {
+    ventasTotalesPorPlato: number[]
+    ventasTotalesPorPlatoAcumuladas: number
+    rentabilidadPorPlatoTotal: number[]
+    rentabilidadPorPlatoTotalAcumulada: number
+}
+
+type IRPResult = number[]
+
+export const IRP = async ({ ventasTotalesPorPlato, ventasTotalesPorPlatoAcumuladas, rentabilidadPorPlatoTotalAcumulada, rentabilidadPorPlatoTotal }: IRPProps):Promise<IRPResult> => {
+    /* 4to informe: IRP
+
+    % de margen = rentabilidadPorPlatoTotal / rentabilidadPorPlatoTotalAcumulada
+    % de venta = ventasTotalesPorPlato / ventasTotalesPorPlatoAcumuladas
+    IRP = % de margen / % de venta
+    Mayor a 1 o menor a 1.
+    */ 
+
+
+   // Calculate percentage margin for each dish with 2 decimal places
+    const margenPorcentajes = rentabilidadPorPlatoTotal.map(
+        rentabilidad => Number((rentabilidad / rentabilidadPorPlatoTotalAcumulada).toFixed(2))
+    )
+
+    // Calculate percentage sales for each dish with 2 decimal places
+    const ventaPorcentajes = ventasTotalesPorPlato.map(
+        venta => Number((venta / ventasTotalesPorPlatoAcumuladas).toFixed(2))
+    )
+
+    // Calculate IRP for each dish with 2 decimal places
+    const irpValores: IRPResult = margenPorcentajes.map(
+        (margen, index) => Number((margen / ventaPorcentajes[index]).toFixed(2))
+    )
+
+    return irpValores
+}
+
+interface IndexPopularidadProps {
+    diasPlato: number[]
+    diasPlatoAcumulados: number
+    cantidadesVendidas: number[]
+    cantidadVendidaTotalAcumulada: number
+}
+
+type IndexPopularidadResult = number[]
+
+export const IndexPopularidad = async ({ diasPlato, diasPlatoAcumulados, cantidadesVendidas, cantidadVendidaTotalAcumulada }: IndexPopularidadProps): Promise<IndexPopularidadResult> => {
+    /*
+    5to informe
+
+    - Indice de ventas: cantidad vendida del plato / cantidad vendida total
+    - Indice de presentacion: cantidad de dias de presentacion / cantidad de dias totales 
+
+    Indice de popularidad: indice de ventas / indice de presentacion
+    */
+
+
+    const indiceVentas = cantidadesVendidas.map(
+        cantidad => Number((cantidad / cantidadVendidaTotalAcumulada).toFixed(2))
+    )
+
+    const indicePresentacion = diasPlato.map(
+        dias => Number((dias / diasPlatoAcumulados).toFixed(2))
+    )
+
+    const indicePopularidad = indiceVentas.map(
+        (indice, index) => Number((indice / indicePresentacion[index]).toFixed(2))
+    )
+    
+    return indicePopularidad
+}
+
+interface CostoMargenProps {
+    costoUnitarioPorPlato: number[]
+    costoUnitarioPorPlatoPromedio: number
+    rentabilidadPorPlato: number[]
+    rentabilidadPorPlatoPromedio: number
+}
+
+type CostoMargenResult = ("Selecto" | "Estandar" | "Durmiente" | "Problema")[]
+
+export const CostoMargen = async ({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: CostoMargenProps): Promise<CostoMargenResult> => {
+    /*
+    6to informe
+
+    - Costo unitario
+    - Costo unitario promedio
+    - Rentabilidad unitaria
+    - Rentabilidad unitaria promedio
+
+    Si el costo unitario es menor al costo unitario promedio, tiene costo bajo
+    Si la rentabilidad unitaria es menor a la rentabilidad unitaria promedio, es rentabilidad baja
+
+    Costo || Rentabilidad || Clasificacion
+    Bajo || Alto || Selecto
+    Alto || Alto || Estandar
+    Bajo || Bajo || Durmiente
+    Alto || Bajo || Problema
+
+    Costo Margen = Costo / Margen
+
+    */
+
+    const clasificaciones: CostoMargenResult = costoUnitarioPorPlato.map((costo, index) => {
+        const rentabilidad = rentabilidadPorPlato[index]
+        
+        // Determine cost classification
+        const costoBajo = costo < costoUnitarioPorPlatoPromedio
+        
+        // Determine profitability classification
+        const rentabilidadAlta = rentabilidad >= rentabilidadPorPlatoPromedio
+        
+        // Determine classification based on cost and profitability
+        if (costoBajo && rentabilidadAlta) {
+            return "Selecto"
+        } else if (!costoBajo && rentabilidadAlta) {
+            return "Estandar"
+        } else if (costoBajo && !rentabilidadAlta) {
+            return "Durmiente"
+        } else {
+            return "Problema"
+        }
+    })
+
+    return clasificaciones
+}
 
