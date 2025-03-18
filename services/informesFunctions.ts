@@ -1,9 +1,27 @@
 import Plate from "@/models/plate";
 
-
 //Valor de Venta = precio final sin impuestos ni recargo por consumo
+interface PlateStructure {
+    _id: string;
+    CodInt: number;
+    Mes_plato: string;
+    Categoria_plato: string;
+    Nombre_plato: string;
+    Cantidad_vendida_plato: number;
+    Costo_plato: number;
+    Precio_plato: number;
+    Dias_plato: number;
+    Valor_Venta: number;
+    Rentabilidad: number;
+    Rentabilidad_total: number;
+    Ventas_total: number;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+}
 
-export const executeInform = async (Mes_informes: string, Informes_category: string) => {
+
+export const executeInform = async (mesInformes: string, informesCategory: string) => {
     // 1. Recibir el mes y la categoria de informes
     // 2. Encontrar todos los platos de esa categoria en esos meses
     // 3. Separar la data 
@@ -13,32 +31,32 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     //1. Data recibida por props
 
     //2. Encontrar data
-    const data = Plate.find({ Mes_plato: Mes_informes, Categoria_plato: Informes_category })
+
+    const data: PlateStructure[] = await Plate.find({ Mes_plato: mesInformes, Categoria_plato: informesCategory })
 
     //3. Separar la data
-    //data artificial
-    const valoresVentas: number[] = [1,2,3]
+    const valoresVentas: number[] = data.map(plate => plate.Valor_Venta);
 
-    const cantidadesVendidas: number[] = [1,2,3]
+    const cantidadesVendidas: number[] = data.map(plate => plate.Cantidad_vendida_plato);
     const cantidadesVendidasPromedio: number = Number((cantidadesVendidas.reduce((acc, curr) => acc + curr, 0) / cantidadesVendidas.length).toFixed(2))
     const cantidadVendidaTotalAcumulada : number = cantidadesVendidas.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
     
-    const ventasTotalesPorPlato: number[] = [1,2,3] //Ventas_Total en modelo Plate: valoresVentas * cantidadesVendidas
+    const ventasTotalesPorPlato: number[] = data.map(plate => plate.Ventas_total); //Ventas_Total en modelo Plate: valoresVentas * cantidadesVendidas
     const ventasTotalesPorPlatoAcumuladas: number = ventasTotalesPorPlato.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
 
-    const rentabilidadPorPlato: number[] = [1,2,3]
+    const rentabilidadPorPlato: number[] = data.map(plate => plate.Rentabilidad);
     const rentabilidadPorPlatoPromedio: number = rentabilidadPorPlato.reduce((acc, curr) => acc + curr, 0) / rentabilidadPorPlato.length; //promedio de rentabilidadPorPlato
-    const rentabilidadPorPlatoTotal: number[] = [1,2,3] //cantidadVendida * rentabilidadPorPlato
+    const rentabilidadPorPlatoTotal: number[] = data.map(plate => plate.Rentabilidad_total); //cantidadVendida * rentabilidadPorPlato
     const rentabilidadPorPlatoTotalPromedio: number = rentabilidadPorPlatoTotal.reduce((acc, curr) => acc + curr, 0) / rentabilidadPorPlato.length; //promedio de rentabilidadPorPlatoTotal
     const rentabilidadPorPlatoTotalAcumulada : number = rentabilidadPorPlatoTotal.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);  
 
-    const diasPlato: number[] = [1,2,3]
+    const diasPlato: number[] = data.map(plate => plate.Dias_plato);
     const diasPlatoAcumulados: number = diasPlato.reduce((accumulator, currentValue) => { return accumulator + currentValue }, 0);
 
-    const costoUnitarioPorPlato: number[] = [1,2,3]
+    const costoUnitarioPorPlato: number[] = data.map(plate => plate.Costo_plato);
     const costoUnitarioPorPlatoPromedio: number = Number((costoUnitarioPorPlato.reduce((acc, curr) => acc + curr, 0) / costoUnitarioPorPlato.length).toFixed(2)); //promedio de costoUnitarioPorPlato
 
-    const costosFijos = 14180 //artificial
+    const costosFijos = 14180 //artificial porque tengo que sacarlo de otros datos
 
     //4. Ejecutar los informes
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
@@ -55,7 +73,19 @@ export const executeInform = async (Mes_informes: string, Informes_category: str
     
     //5. Retornar los resultados
 
-    return data
+    return {
+        omnesResult,
+        BCGResult,
+        ADLResult,
+        IRPResult,
+        indicePopularidadResult,
+        CostoMargenResult,
+        MillerResult,
+        UmanResult,
+        MerrickResult,
+        PuntoEquilibrioResult,
+        MultiCriterioResult
+    }
 }
 
 interface OmnesFunctionProps {
@@ -63,7 +93,14 @@ interface OmnesFunctionProps {
     cantidadesVendidas: number[] //array de las cantidades vendidas de los platos en el mes y categoria indicados
 }
 
- const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctionProps) => {
+type OmnesResult = [
+    1 | 0, 
+    1 | 0, 
+    -1 | 0 | 1, 
+    number
+]
+
+const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctionProps): Promise<OmnesResult> => {
     //4 principios
 
     /*
@@ -104,7 +141,7 @@ interface OmnesFunctionProps {
 
     //6. Definimos si cumple o no con el primer principio de Omnes
 
-    const cumpleOmnes1 = platosZ1 + platosZ3 === platosZ2 ? "Cumple" : "No cumple"
+    const cumpleOmnes1: (1 | 0) = platosZ1 + platosZ3 === platosZ2 ? 1 : 0 //1 es que cumple, 0 es que no cumple
 
     /*
     2do principio:
@@ -119,7 +156,7 @@ interface OmnesFunctionProps {
     const proporcionPlatos = valorMayor / valorMenor
 
     //3. Definimos si cumple o no con el 2do principio de Omnes
-    const cumpleOmnes2 = cantidadPlatos <= 9 ? (proporcionPlatos <= 2.5 ? 'Cumple' : 'No cumple') : (proporcionPlatos <= 3 ? 'Cumple' : 'No cumple')
+    const cumpleOmnes2: (1 | 0) = cantidadPlatos <= 9 ? (proporcionPlatos <= 2.5 ? 1 : 0) : (proporcionPlatos <= 3 ? 1 : 0) //1 es que cumple, 0 es que no cumple
 
 
 
@@ -181,19 +218,12 @@ interface OmnesFunctionProps {
 
     /*
     4to principio:
-
     La promoción debe ser menor a PMP (ticket promedio)
     */
 
+    const cumpleOmnes4 : number = Number(PMP.toFixed(2)) //numero al que la promocion debe ser menor
 
-    const cumpleOmnes4 = `Promoción debe ser menor a ${Number(PMP.toFixed(2))}`
-
-    const omnesResult = {
-        '1 principio': cumpleOmnes1,
-        '2 principio': cumpleOmnes2,
-        '3 principio': cumpleOmnes3,
-        '4 principio': cumpleOmnes4
-    }
+    const omnesResult: OmnesResult = [cumpleOmnes1, cumpleOmnes2, cumpleOmnes3, cumpleOmnes4]
 
     return omnesResult
 }

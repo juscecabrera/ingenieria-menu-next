@@ -12,30 +12,30 @@ const Platos = () => {
     const [platesData, setPlatesData] = useState([])
 
     const fetchPlates = async () => {
-        try {
-          const response = await fetch('/api/plates')
-          const data = await response.json()
-          setPlatesData(data.data)
-          setLoading(false)
-    
-          if (!response.ok) throw new Error('Failed to fetch costs');
-        } catch (error) {
-          console.error("Error in useEffect:", error);
-          
-        }
+      try {
+        const response = await fetch('/api/plates')
+        const data = await response.json()
+        setPlatesData(data.data)
+        setLoading(false)
+  
+        if (!response.ok) throw new Error('Failed to fetch costs');
+      } catch (error) {
+        console.error("Error in useEffect:", error);
+        
+      }
     }
 
     useEffect(() => { 
-        fetchPlates()
+      fetchPlates()
     }, [])
 
     const handleAddPlates = () => { 
-        setshowModal(prev => true)  
+      setshowModal(prev => true)  
     }
 
     const refreshButton = () => {
-        setLoading(true)
-        fetchPlates()
+      setLoading(true)
+      fetchPlates()
     }
 
 

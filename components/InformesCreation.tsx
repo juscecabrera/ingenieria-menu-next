@@ -29,8 +29,6 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
   const createInforms = async () => { 
     try {
       //funciona
-      
-      
       const response = await fetch('/api/informes', {
         method: 'POST',
         headers: {
@@ -41,6 +39,9 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
 
       if (!response.ok) throw new Error('Failed to add costs');
 
+      const data = await response.json();
+
+      console.log(data);
 
       setTimeout(() => {
         refreshButton();
@@ -66,10 +67,10 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
         <select 
           className="select" 
           name="Mes_informes" 
-          onChange={(e) => setInformesData(prev => ({...prev, Mes: e.target.value}))}
-          value={informesData.Mes_informes || ''}
+          onChange={(e) => setInformesData(prev => ({...prev, Mes_informes: e.target.value}))}
+          value={informesData.Mes_informes}
         >
-          <option value="" disabled>Seleccione un mes</option>
+          <option value="">Seleccione un mes</option>
           <option value="1">Enero</option>
           <option value="2">Febrero</option>
           <option value="3">Marzo</option>
@@ -95,10 +96,10 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
           onChange={(e) => setInformesData(prev => ({...prev, Informes_category: e.target.value}))}
         >
           <option value="" disabled>Seleccione una categoría</option>
-          <option value={"ENTRADAS"}>ENTRADAS</option>
-          <option value={"FONDOS"}>FONDOS</option>
-          <option value={"POSTRES"}>POSTRES</option>
-          <option value={"BEBIDAS"}>BEBIDAS</option>
+          <option value={"Entradas"}>ENTRADAS</option>
+          <option value={"Fondos"}>FONDOS</option>
+          <option value={"Postres"}>POSTRES</option>
+          <option value={"Bebidas"}>BEBIDAS</option>
         </select>
       </fieldset>
 

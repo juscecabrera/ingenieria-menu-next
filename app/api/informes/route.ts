@@ -11,18 +11,18 @@ Ponerle el modelo de Informes, no de Plates
 
 // 📌 POST: Crear un nuevo informe
 export async function POST(req: NextRequest) {
-  //Recibe Mes_informes, Informes_category
-
-
   try {
     await connectToDatabase();
     const plateData = await req.json();
 
-    const response = executeInform(plateData.Mes_informes, plateData.Informes_category)
+    const mesInformes: string = plateData.Mes_informes
+    const informesCategory: string = plateData.Informes_category
 
-    // const newPlate = new Plate(plateData);
-    // await newPlate.save();
-    return NextResponse.json({ message: 'Plate added successfully', data: response   }, { status: 201 });
+    const response = await executeInform(mesInformes, informesCategory)
+
+    //response tiene que crear el informe en mongodb
+
+    return NextResponse.json({ message: 'Inform created successfully', data: response  }, { status: 201 });
   } catch (error) {
     console.error('❌ Error adding plate:', error);
     return NextResponse.json({ message: 'Error adding plate', error }, { status: 500 });
