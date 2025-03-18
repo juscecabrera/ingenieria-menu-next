@@ -21,20 +21,13 @@ interface PlateStructure {
 }
 
 
-export const executeInform = async (mesInformes: string, informesCategory: string) => {
-    // 1. Recibir el mes y la categoria de informes
-    // 2. Encontrar todos los platos de esa categoria en esos meses
-    // 3. Separar la data 
-    // 4. Ejecutar los informes
-    // 5. Retornar los resultados
+export const executeInform = async (data : PlateStructure[], mesInformes: string, informesCategory: string) => {
+    // 1. Recibir data
+    // 2. Separar la data 
+    // 3. Ejecutar los informes
+    // 4. Retornar los resultados
 
-    //1. Data recibida por props
-
-    //2. Encontrar data
-
-    const data: PlateStructure[] = await Plate.find({ Mes_plato: mesInformes, Categoria_plato: informesCategory })
-
-    //3. Separar la data
+    //2. Separar la data
     const valoresVentas: number[] = data.map(plate => plate.Valor_Venta);
 
     const cantidadesVendidas: number[] = data.map(plate => plate.Cantidad_vendida_plato);
@@ -58,7 +51,7 @@ export const executeInform = async (mesInformes: string, informesCategory: strin
 
     const costosFijos = 14180 //artificial porque tengo que sacarlo de otros datos
 
-    //4. Ejecutar los informes
+    //3. Ejecutar los informes
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 
     const BCGResult = await BCGPop({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas })
     const ADLResult = await ADL({ cantidadesVendidas, rentabilidadPorPlato })
@@ -71,7 +64,7 @@ export const executeInform = async (mesInformes: string, informesCategory: strin
     const PuntoEquilibrioResult = await PuntoEquilibrio({ costosFijos, rentabilidadPorPlato, rentabilidadPorPlatoPromedio })
     const MultiCriterioResult = await multiCriterio({ BCGResult, CostoMargenResult, MillerResult, UmanResult, MerrickResult})
     
-    //5. Retornar los resultados
+    //4. Retornar los resultados
 
     return {
         omnesResult,
@@ -93,12 +86,7 @@ interface OmnesFunctionProps {
     cantidadesVendidas: number[] //array de las cantidades vendidas de los platos en el mes y categoria indicados
 }
 
-type OmnesResult = [
-    1 | 0, 
-    1 | 0, 
-    -1 | 0 | 1, 
-    number
-]
+type OmnesResult = [1 | 0, 1 | 0, -1 | 0 | 1, number]
 
 const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctionProps): Promise<OmnesResult> => {
     //4 principios
@@ -157,8 +145,6 @@ const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctio
 
     //3. Definimos si cumple o no con el 2do principio de Omnes
     const cumpleOmnes2: (1 | 0) = cantidadPlatos <= 9 ? (proporcionPlatos <= 2.5 ? 1 : 0) : (proporcionPlatos <= 3 ? 1 : 0) //1 es que cumple, 0 es que no cumple
-
-
 
     /*
     3er principio:

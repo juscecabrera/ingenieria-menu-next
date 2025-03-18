@@ -3,13 +3,14 @@
 import { useState } from "react";
 
 interface InformesCreationProps {
+  setInformesData: (informesData: any) => void; //arreglar esto
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;
 }
 
 
-const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refreshButton }) => {
-  const [informesData, setInformesData] = useState({
+const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refreshButton, setInformesData }) => {
+  const [informSpecs, setInformSpecs] = useState({
     Mes_informes: '',
     Informes_category: ''
   });
@@ -21,10 +22,7 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
   4. Mostrar informe
   5. Almacenar el informe en otra coleccion de Informes, no Plate ni Costs. 
   6. Al hacer el fetch en page tiene que hacerlo a la coleccion Informes
-  7. 
-  
   */
-
 
   const createInforms = async () => { 
     try {
@@ -34,14 +32,14 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(informesData),
+        body: JSON.stringify(informSpecs),
       });
 
       if (!response.ok) throw new Error('Failed to add costs');
 
       const data = await response.json();
 
-      console.log(data);
+      setInformesData((prev: any) => data.data); //arreglar el type
 
       setTimeout(() => {
         refreshButton();
@@ -67,8 +65,8 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
         <select 
           className="select" 
           name="Mes_informes" 
-          onChange={(e) => setInformesData(prev => ({...prev, Mes_informes: e.target.value}))}
-          value={informesData.Mes_informes}
+          onChange={(e) => setInformSpecs(prev => ({...prev, Mes_informes: e.target.value}))}
+          value={informSpecs.Mes_informes}
         >
           <option value="">Seleccione un mes</option>
           <option value="1">Enero</option>
@@ -92,8 +90,8 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
         <select 
           className="select" 
           name="Informes_category" 
-          value={informesData.Informes_category || ''}
-          onChange={(e) => setInformesData(prev => ({...prev, Informes_category: e.target.value}))}
+          value={informSpecs.Informes_category || ''}
+          onChange={(e) => setInformSpecs(prev => ({...prev, Informes_category: e.target.value}))}
         >
           <option value="" disabled>Seleccione una categoría</option>
           <option value={"Entradas"}>ENTRADAS</option>

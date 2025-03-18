@@ -10,22 +10,23 @@ const Informes = () => {
   const [loading, setLoading] = useState(true)
   const [informesData, setInformesData] = useState([])
   
-  const fetchInformes = async () => {
-    try {
-      const response = await fetch('/api/informes')
-      const data = await response.json()
-      setInformesData(data.data)
-      setLoading(false)
+  // const fetchInformes = async () => {
+  //   try {
+  //     const response = await fetch('/api/informes')
+  //     const data = await response.json()
+  //     setInformesData(data.data)
+  //     setLoading(false)
 
-      if (!response.ok) throw new Error('Failed to fetch costs');
-    } catch (error) {
-      console.error("Error in useEffect:", error);
+  //     if (!response.ok) throw new Error('Failed to fetch costs');
+  //   } catch (error) {
+  //     console.error("Error in useEffect:", error);
       
-    }
-  } 
+  //   }
+  // } 
 
   useEffect(() => { 
-    fetchInformes()
+    // fetchInformes()
+    setLoading(false) //temporal
   }, [])
 
   const handleAddInformes = () => {
@@ -33,8 +34,9 @@ const Informes = () => {
   }
 
   const refreshButton = async () => {
-    setLoading(true)
-    fetchInformes()
+    return
+    // setLoading(true)
+    // fetchInformes()
   }
 
   return (
@@ -48,7 +50,7 @@ const Informes = () => {
 
       {showModal && (
         <div className='fixed top-0 left-0 w-full h-full bg-black/20 flex justify-center items-center z-50'>
-          <InformesCreation setShowModal={setshowModal} refreshButton={refreshButton}/>
+          <InformesCreation setShowModal={setshowModal} refreshButton={refreshButton} setInformesData = {setInformesData} />
         </div>
       )}
 

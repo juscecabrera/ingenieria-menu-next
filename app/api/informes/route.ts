@@ -18,11 +18,17 @@ export async function POST(req: NextRequest) {
     const mesInformes: string = plateData.Mes_informes
     const informesCategory: string = plateData.Informes_category
 
-    const response = await executeInform(mesInformes, informesCategory)
+    const data = await Plate.find({ Mes_plato: mesInformes, Categoria_plato: informesCategory })
+
+    const nombresPlatos = data.map((plato) => plato.Nombre_plato)
+
+    const response = await executeInform(data, mesInformes, informesCategory)
 
     //response tiene que crear el informe en mongodb
 
-    return NextResponse.json({ message: 'Inform created successfully', data: response  }, { status: 201 });
+    const payload = [nombresPlatos, response]
+
+    return NextResponse.json({ message: 'Inform created successfully', data: payload  }, { status: 201 });
   } catch (error) {
     console.error('❌ Error adding plate:', error);
     return NextResponse.json({ message: 'Error adding plate', error }, { status: 500 });
