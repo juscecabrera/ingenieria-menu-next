@@ -31,7 +31,7 @@ const InformesResults = ({ informesData }: any) => {
         <table className='table mt-2 table-lg'>
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Código</th>
               <th>Nombre</th>
               <th>BCG</th>
               <th>ADL</th>

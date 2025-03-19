@@ -41,10 +41,12 @@ const Costs = () => {
   return (
     <div className="p-4">
       <h2 className="font-bold text-2xl">Costos</h2>
-      <Link href="/">Regresar</Link>
 
-      <button className='btn' onClick={() => handleAddCosts()}>Registrar costos</button>
-      <button className='btn' onClick={() => refreshButton()}>Actualizar</button>
+      <div className="my-4">
+        <button className='btn' onClick={() => handleAddCosts()}>Registrar costos</button>
+        <button className='btn' onClick={() => refreshButton()}>Actualizar</button>
+
+      </div>
 
 
       {showModal && (
