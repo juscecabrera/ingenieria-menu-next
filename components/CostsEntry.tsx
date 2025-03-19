@@ -68,7 +68,7 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-black shadow-xl flex flex-col gap-y-5">
+    <div className="bg-white p-4 rounded-lg shadow-xl flex flex-col gap-y-5">
       <h1 className="col-span-2 text-xl font-bold">Registro de Costos Fijos</h1>
       
       <button className="btn max-w-48">Nuevo Concepto</button>
@@ -77,7 +77,7 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Mes</legend>
           <select 
-            className="select" 
+            className="select border border-black" 
             name="Mes" 
             value={costsData.Mes || ''} 
             onChange={handleChange}
@@ -103,7 +103,7 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
             <legend className="fieldset-legend">{key}</legend>
             <input
               type="number"
-              className="input"
+              className="input border border-black"
               name={value}
               value={costsData[value] || ''}
               onChange={handleChange}
