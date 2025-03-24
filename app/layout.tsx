@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar";
 import { Nunito_Sans } from 'next/font/google';
 
 import "./globals.css";
 
-const geistSans = Geist({
+/*const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -15,6 +15,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+*/
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'], // Subconjuntos que necesitas (latin es común)
@@ -37,11 +39,14 @@ export default function RootLayout({
       <body
         className={nunitoSans.className}
         >
-      <SidebarProvider>
-      <AppSidebar />
-          <SidebarTrigger />
         {children}
-      </SidebarProvider>
+
+        {/*
+           <SidebarProvider>
+           <AppSidebar />
+           <SidebarTrigger />
+           </SidebarProvider>
+            */}
       </body>
     </html>
   );

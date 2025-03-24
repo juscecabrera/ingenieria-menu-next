@@ -72,7 +72,7 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
         <fieldset className="fieldset">
           <legend className="fieldset-legend">Mes</legend>
           <select 
-            className="select" 
+            className="select border border-black" 
             name="Mes_plato" 
             value={plateData.Mes_plato || ''} 
             onChange={handleChange}
@@ -99,7 +99,7 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
             <legend className="fieldset-legend">{key}</legend>
             <input
               type={value === 'Cantidad_vendida_plato' || value === 'Precio_plato' || value === 'Costo_plato' || value === 'Dias_plato' ? 'number' : 'text'}
-              className="input"
+              className="input border border-black"
               name={value}
               value={plateData[value] || ''}
               onChange={handleChange}

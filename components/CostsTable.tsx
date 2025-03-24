@@ -1,7 +1,18 @@
 import React from 'react'
 
 function CostsTable({ costsData }: any) {
-  return (
+    
+    const updateButton = () => {
+        alert('voy a llevarte pa pr')
+    }
+
+
+
+    const deleteButton = () => {
+        return
+    }
+
+    return (
     <>
         <table className='table table-lg w-1/2'>
         <thead>
@@ -35,8 +46,8 @@ function CostsTable({ costsData }: any) {
                 <td>{costs.Publicidad  || ''}</td>
                 <td>{costs.Internet  || ''}</td>
                 <td>{costs.Otros  || ''}</td>
-                {/* <td><button onClick={() => updateButton()}>Actualizar</button></td>
-                <td><button onClick={() => deleteButton()}>Eliminar</button></td> */}
+                <td><button className='' onClick={() => updateButton()}>Actualizar</button></td>
+                <td><button onClick={() => deleteButton()}>Eliminar</button></td>
             </tr>
             ))}
         </tbody>
