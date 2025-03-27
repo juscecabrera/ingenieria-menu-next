@@ -23,7 +23,7 @@ const userDataDemo = {
     name: "Jusce",
     email: "jusce@example.com",
     avatar: 'logoGastro.webp'
-}
+} //en realidad la data la saca de useSession. Por ahora estoy usando useSession solamente en NavUser, pero creo que eventualmente pasara a aca
 
 export function AppSidebar() {
     return (

@@ -1,5 +1,7 @@
 "use client"
 
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import {
   IconCreditCard,
@@ -42,14 +44,30 @@ export function NavUser({
     avatar: string
   }
 }) {
+
+    const { data: session, status } = useSession();
+
+    if (status === "loading") {
+        return <p>Cargando...</p>;
+    }
+
+    if (status === "unauthenticated") {
+        return <p>No has iniciado sesión</p>;
+    }
     const { isMobile } = useSidebar()
     const router = useRouter()
 
+    const handleLogout = async () => {
+        try {
+            await signOut({
+                redirect: false, // Evita redirección automática
+            });
+            router.push("/login"); // Redirige manualmente a la página de login
+        } catch (error) {
+            console.error("Error durante el logout:", error);
+        }
+    };
 
-
-    const logoutFunction = () => {
-        router.push('/')
-    }
 
   return (
     <SidebarMenu>
@@ -67,7 +85,7 @@ export function NavUser({
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {session?.user?.email}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
@@ -82,13 +100,13 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user.avatar} alt={session?.user?.email} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {user.email}
+                  {session?.user?.email}
                   </span>
                 </div>
               </div>
@@ -109,7 +127,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => logoutFunction()}>
+            <DropdownMenuItem onClick={() => handleLogout()}>
               <IconLogout />
               Cerrar sesión
             </DropdownMenuItem>
