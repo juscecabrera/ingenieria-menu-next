@@ -24,38 +24,48 @@ const InformesResults = ({ informesData }: any) => {
 
       <div className='mt-2'>
         <p>Omnes: {JSON.stringify(omnes)}</p>
-        <table className='table mt-2 table-lg'>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>BCG</th>
-              <th>ADL</th>
-              <th>IRP</th>
-              <th>Indice Popularidad</th>
-              <th>Costo Margen</th>
-              <th>Miller</th>
-              <th>Uman</th>
-              <th>Merrick</th>
-              <th>Punto Equilibrio</th>
-              <th>Multi Criterio</th>
+        <table className='border border-black table mt-2 table-lg'>
+          <thead className='border border-black'>
+            <tr className='border border-black'>
+              <th className='border border-black'>Código</th>
+              <th className='border border-black'>Nombre</th>
+              <th className='border border-black'>BCG</th>
+              <th className='border border-black'>ADL</th>
+              <th className='border border-black'>IRP</th>
+              <th className='border border-black'>Indice Popularidad</th>
+              <th className='border border-black'>Costo Margen</th>
+              <th className='border border-black'>Miller</th>
+              <th className='border border-black'>Uman</th>
+              <th className='border border-black'>Merrick</th>
+              <th className='border border-black'>Punto Equilibrio</th>
+              <th className='border border-black'>Multi Criterio</th>
             </tr>
           </thead>
           <tbody>
             {nombresPlato.map((plato: string, index: number) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{plato}</td>
-                <td>{BCG[index] || '-'}</td>
-                <td>{JSON.stringify(ADL[index]) || '-'}</td>
-                <td>{IRP[index] || '-'}</td>
-                <td>{indicePopularidad[index] || '-'}</td>
-                <td>{CostoMargen[index] || '-'}</td>
-                <td>{Miller[index] || '-'}</td>
-                <td>{Uman[index] || '-'}</td>
-                <td>{Merrick[index] || '-'}</td>
-                <td>{PuntoEquilibrio[index] || '-'}</td>
-                <td>{MultiCriterio[index] || '-'}</td>
+              <tr key={index} className='text-center'>
+                <td className='border border-black'>{index + 1}</td>
+                <td className='border border-black'>{plato}</td>
+                <td className='border border-black'>{BCG[index] || '-'}</td>
+                <td className='border border-black'>{JSON.stringify(ADL[index]) || '-'}</td>
+                <td className='border border-black'>{IRP[index] || '-'}</td>
+                <td className='border border-black'>{indicePopularidad[index] || '-'}</td>
+                <td className='border border-black'>{CostoMargen[index] || '-'}</td>
+                <td className='border border-black'>{Miller[index] || '-'}</td>
+                <td className='border border-black'>{Uman[index] || '-'}</td>
+                <td className='border border-black'>{Merrick[index] || '-'}</td>
+                <td className='border border-black'>{PuntoEquilibrio[index] || '-'}</td>
+                <td className={"border border-black " + ( 
+                    MultiCriterio[index] >= 5 && MultiCriterio[index] <= 7 
+                        ? 'bg-red-400' 
+                        : MultiCriterio[index] >= 8 && MultiCriterio[index] <= 11 
+                            ? 'bg-yellow-400' 
+                            : MultiCriterio[index] >= 12 && MultiCriterio[index] <= 20 
+                                ? 'bg-green-400' 
+                                : '')
+                } >
+                {MultiCriterio[index] || '-'}
+                </td>               
               </tr>
             ))}
           </tbody>
