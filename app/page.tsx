@@ -1,3 +1,5 @@
+import LoginPage from "./(public)/login/page";
+
 
 /*
 Por hacer:
@@ -20,7 +22,8 @@ Por hacer:
 export default function Home() {
   return (
     <div className="p-4">
-      <h1>Ingenieria del Menu</h1>
+    { /*<h1>Ingenieria del Menu</h1> */}
+      <LoginPage />
     </div>
   );
 }

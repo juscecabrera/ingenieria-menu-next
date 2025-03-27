@@ -2,8 +2,6 @@ import React from 'react'
 
 const InformesResults = ({ informesData }: any) => {
   
-  const mes = 'Marzo'
-  const categoria = 'Postres'
 
   const nombresPlato = informesData[0] || []
 
@@ -23,8 +21,6 @@ const InformesResults = ({ informesData }: any) => {
 
   return (
     <div>
-      <h2>Mes: {mes}</h2>
-      <h2>Categoria: {categoria}</h2>
 
       <div className='mt-2'>
         <p>Omnes: {JSON.stringify(omnes)}</p>

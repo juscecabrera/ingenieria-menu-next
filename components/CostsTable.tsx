@@ -46,8 +46,8 @@ function CostsTable({ costsData }: any) {
                 <td>{costs.Publicidad  || ''}</td>
                 <td>{costs.Internet  || ''}</td>
                 <td>{costs.Otros  || ''}</td>
-                <td><button className='' onClick={() => updateButton()}>Actualizar</button></td>
-                <td><button onClick={() => deleteButton()}>Eliminar</button></td>
+                <td><button className='border border-black p-2 rounded-2xl' onClick={() => updateButton()}>Actualizar</button></td>
+                <td><button className='border border-black p-2 rounded-2xl' onClick={() => deleteButton()}>Eliminar</button></td>
             </tr>
             ))}
         </tbody>

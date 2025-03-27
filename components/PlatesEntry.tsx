@@ -9,7 +9,7 @@ interface PlatesEntryProps {
 
 const platesEntryTableFields = {
   // 'Mes del Plato': 'Mes_plato',
-  'Categoría': 'Categoria_plato',
+//  'Categoría': 'Categoria_plato',
   'Nombre del Plato': 'Nombre_plato',
   'Cantidad Vendida': 'Cantidad_vendida_plato',
   'Costo': 'Costo_plato',
@@ -17,7 +17,7 @@ const platesEntryTableFields = {
   'Días Disponible': 'Dias_plato'
 } as const;
 
-type PlateField = typeof platesEntryTableFields[keyof typeof platesEntryTableFields] | 'CodInt' | 'Mes_plato';
+type PlateField = typeof platesEntryTableFields[keyof typeof platesEntryTableFields] | 'CodInt' | 'Mes_plato' | 'Categoria_plato' ;
 
 const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }) => {
   const [plateData, setPlateData] = useState<Partial<Record<PlateField, string>>>({ CodInt: "1" });
@@ -66,7 +66,7 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
   return (
     <div className="bg-white p-6 rounded-2xl border border-black/20 shadow-xl flex flex-col gap-y-5">
       <h1 className="col-span-2 text-xl font-bold">Registro de Platos</h1>
-      
+      <h2>2025</h2> 
       <div className="col-span-2 row-start-3 grid p-4 grid-cols-2 gap-x-5 gap-y-5 border border-black rounded-lg">
 
         <fieldset className="fieldset">
@@ -93,6 +93,21 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
           </select>
         </fieldset>
 
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Categoria</legend>
+          <select 
+            className="select border border-black" 
+            name="Categoria_plato" 
+            value={plateData.Categoria_plato || ''} 
+            onChange={handleChange}
+          >
+            <option value="" disabled>Seleccione un mes</option>
+            <option value="Fondos">FONDOS</option>
+            <option value="Postres">POSTRES</option>
+            <option value="Entradas">ENTRADAS</option>
+            <option value="Bebidas">BEBIDAS</option>
+          </select>
+        </fieldset>
 
         {Object.entries(platesEntryTableFields).map(([key, value]) => (
           <fieldset key={value} className="fieldset">

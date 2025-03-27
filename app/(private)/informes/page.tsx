@@ -9,7 +9,12 @@ const Informes = () => {
   const [showModal, setshowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [informesData, setInformesData] = useState([])
-  
+  const [informSpecs, setInformSpecs] = useState({
+    Mes_informes: '',
+    Informes_category: ''
+  });
+
+
   // const fetchInformes = async () => {
   //   try {
   //     const response = await fetch('/api/informes')
@@ -23,6 +28,9 @@ const Informes = () => {
       
   //   }
   // } 
+
+  const mes = 'Marzo'
+  const categoria = 'Postres'
 
   useEffect(() => { 
     // fetchInformes()
@@ -41,8 +49,10 @@ const Informes = () => {
 
   return (
     <div className="p-4">
-      <h2 className="font-bold text-2xl">Informes</h2>
+      <h2 className="font-bold text-2xl mb-2">Informes</h2>
 
+      <h2>Mes: {informSpecs.Mes_informes}</h2>
+      <h2>Categoria: {informSpecs.Informes_category}</h2>
       <div className='my-4'>
         <button className='btn' onClick={() => handleAddInformes()}>Generar informes</button>
         <button className='btn' onClick={() => refreshButton()}>Actualizar</button>
@@ -51,7 +61,7 @@ const Informes = () => {
 
       {showModal && (
         <div className='fixed top-0 left-0 w-full h-full bg-black/20 flex justify-center items-center z-50'>
-          <InformesCreation setShowModal={setshowModal} refreshButton={refreshButton} setInformesData = {setInformesData} />
+          <InformesCreation setShowModal={setshowModal} refreshButton={refreshButton} setInformesData = {setInformesData} informSpecs={informSpecs} setInformSpecs={setInformSpecs}/>
         </div>
       )}
 

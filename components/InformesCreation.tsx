@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 
+type informSpecsType = {
+    'Mes_informes': string
+    'Informes_category': string
+}
+
+
 interface InformesCreationProps {
   setInformesData: (informesData: any) => void; //arreglar esto
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;
+  informSpecs: informSpecsType;
+  setInformSpecs: (informSpecs: any) => void //arreglar esto
+
 }
 
 
-const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refreshButton, setInformesData }) => {
-  const [informSpecs, setInformSpecs] = useState({
-    Mes_informes: '',
-    Informes_category: ''
-  });
+const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refreshButton, setInformesData, informSpecs, setInformSpecs  }) => {
 
   /*
   1. Mandar el mes y la categoria de informes

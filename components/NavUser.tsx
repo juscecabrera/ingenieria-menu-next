@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   IconCreditCard,
   IconDotsVertical,
@@ -41,7 +42,14 @@ export function NavUser({
     avatar: string
   }
 }) {
-  const { isMobile } = useSidebar()
+    const { isMobile } = useSidebar()
+    const router = useRouter()
+
+
+
+    const logoutFunction = () => {
+        router.push('/')
+    }
 
   return (
     <SidebarMenu>
@@ -101,7 +109,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logoutFunction()}>
               <IconLogout />
               Cerrar sesión
             </DropdownMenuItem>
