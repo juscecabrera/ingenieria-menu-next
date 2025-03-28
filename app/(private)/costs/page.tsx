@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import CostsEntry from '@/components/CostsEntry'
-import Link from "next/link"
+// import Link from "next/link"
 import CostsTable from '@/components/CostsTable'
 
 const Costs = () => {

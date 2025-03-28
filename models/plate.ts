@@ -1,7 +1,7 @@
 import { Schema, model, models } from 'mongoose';
 
 const PlateSchema = new Schema({
-  CodInt: { type: Number, required: true },
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },  
   Mes_plato: { type: String, required: true },
   Categoria_plato: { type: String, required: true },
   Nombre_plato: { type: String, required: true },

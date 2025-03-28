@@ -1,6 +1,10 @@
 'use client'
 import { useState } from "react";
-
+/*
+    * Aqui falta hacer el mismo rework que hice en PlatesEntry para que pueda tener userId
+    *
+    *
+    * */
 interface CostsEntryProps {
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;

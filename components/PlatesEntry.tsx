@@ -1,26 +1,27 @@
 'use client';
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface PlatesEntryProps {
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;
 }
 
-const platesEntryTableFields = {
-  // 'Mes del Plato': 'Mes_plato',
-//  'Categoría': 'Categoria_plato',
-  'Nombre del Plato': 'Nombre_plato',
-  'Cantidad Vendida': 'Cantidad_vendida_plato',
-  'Costo': 'Costo_plato',
-  'Precio': 'Precio_plato',
-  'Días Disponible': 'Dias_plato'
-} as const;
-
-type PlateField = typeof platesEntryTableFields[keyof typeof platesEntryTableFields] | 'CodInt' | 'Mes_plato' | 'Categoria_plato' ;
 
 const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }) => {
-  const [plateData, setPlateData] = useState<Partial<Record<PlateField, string>>>({ CodInt: "1" });
+  const { data: session } = useSession();
+  const [plateData, setPlateData] = useState({   
+      'userId': session?.user?.id || '',
+      'Mes_plato': '',
+      'Categoria_plato': '',
+      'Nombre_plato': '',
+      'Cantidad_vendida_plato': '',
+      'Costo_plato': '',
+      'Precio_plato': '',
+      'Dias_plato': ''
+  });
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -109,19 +110,67 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
           </select>
         </fieldset>
 
-        {Object.entries(platesEntryTableFields).map(([key, value]) => (
-          <fieldset key={value} className="fieldset">
-            <legend className="fieldset-legend">{key}</legend>
-            <input
-              type={value === 'Cantidad_vendida_plato' || value === 'Precio_plato' || value === 'Costo_plato' || value === 'Dias_plato' ? 'number' : 'text'}
-              className="input border border-black"
-              name={value}
-              value={plateData[value] || ''}
-              onChange={handleChange}
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Nombre del Plato</legend>
+            <input 
+                type="text"
+                className="input border border-black"
+                name="Nombre_plato"
+                value={plateData.Nombre_plato || ''}
+                onChange={handleChange}
             />
-          </fieldset>
-        ))}
-      </div>
+        </fieldset>
+
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Cantidad Vendida</legend>
+            <input 
+                type="text"
+                className="input border border-black"
+                name="Cantidad_vendida_plato"
+                value={plateData.Cantidad_vendida_plato || ''}
+                onChange={handleChange}
+            />
+        </fieldset>
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Costo Plato</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Costo_plato"
+                value={plateData.Costo_plato || ''}
+                onChange={handleChange}
+            />
+        </fieldset>
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Precio Plato</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Precio_plato"
+                value={plateData.Precio_plato || ''}
+                onChange={handleChange}
+            />
+        </fieldset>
+      
+
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Dias en la Carta</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Dias_plato"
+                value={plateData.Dias_plato || ''}
+                onChange={handleChange}
+            />
+        </fieldset>
+
+
+
+        </div>
 
       <div className="row-start-4 col-span-2 flex justify-center items-center bg-white gap-x-5">
         <button onClick={handleAddPlate} className="btn">Agregar</button>

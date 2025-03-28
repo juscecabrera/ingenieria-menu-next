@@ -2,12 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { z } from "zod";
 
 const registerSchema = z.object({
   email: z.string().email("Debe ser un correo válido"),
+  name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres" })
+  .max(50, { message: "El nombre no puede exceder los 50 caracteres" })
+  .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$/, { message: "El nombre solo puede contener letras, sin espacios ni números" }),
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
@@ -15,7 +19,8 @@ type RegisterForm = z.infer<typeof registerSchema>;
 type ResponseData = { message: string; id?: string };
 
 export default function RegisterPage() {
-  const [form, setForm] = useState<RegisterForm>({ email: "", password: "" });
+  const router = useRouter();
+  const [form, setForm] = useState<RegisterForm>({ email: "", name: "", password: "" });
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
@@ -39,8 +44,13 @@ export default function RegisterPage() {
         throw new Error(data.message || "Error al registrar el usuario");
       }
 
-      setSuccess("¡Usuario registrado con éxito! Ahora puedes iniciar sesión.");
-      setForm({ email: "", password: "" });
+      setSuccess("¡Usuario registrado con éxito! Rediriendo a login");
+      setForm({ email: "", name:"", password: "" });
+        
+      setTimeout(() => {
+          router.push("/login")
+      }, 2500)
+
     } catch (err) {
       if (err instanceof z.ZodError) {
         setError(err.errors[0].message);
@@ -76,6 +86,17 @@ export default function RegisterPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="tu@email.com"
+            / >
+        </div>
+        <div className="grid gap-3">
+            <Label htmlFor="password">Nombre</Label>
+            <Input
+                id="name"
+                type="name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+                placeholder="Mínimo 2 caracteres"
             / >
         </div>
         <div className="grid gap-3">

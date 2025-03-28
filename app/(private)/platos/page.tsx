@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 
 import PlatesEntry from '@/components/PlatesEntry'
 import PlatesTable from '@/components/PlatesTable'
-import Link from 'next/link'
+// import Link from 'next/link'
 
 const Platos = () => {
     const [showModal, setshowModal] = useState(false)

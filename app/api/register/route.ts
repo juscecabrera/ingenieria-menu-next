@@ -7,6 +7,9 @@ import { User } from "@/models/user";
 // Esquema de validación para el registro
 const registerSchema = z.object({
   email: z.string().email("Debe ser un correo válido"),
+  name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres" })
+  .max(50, { message: "El nombre no puede exceder los 50 caracteres" })
+  .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$/, { message: "El nombre solo puede contener letras, sin espacios ni números" }),
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
@@ -15,7 +18,7 @@ const registerSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password } = registerSchema.parse(body);
+    const { email, name, password } = registerSchema.parse(body);
 
     await connectToDatabase();
     const existingUser = await User.findOne({ email });
@@ -27,6 +30,7 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       email,
+      name,
       password: hashedPassword,
     });
     const result = await user.save();

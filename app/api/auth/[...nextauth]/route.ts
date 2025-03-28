@@ -57,6 +57,24 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    // Callback para el JWT
+    async jwt({ token, user }) {
+      if (user) {
+        // Cuando el usuario se autentica, agrega el id al token
+        token.id = user.id;
+      }
+      return token;
+    },
+    // Callback para la sesión
+    async session({ session, token }) {
+      // Agrega el id del token a session.user
+      if (token && session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
   pages: {
     signIn: "/login", // Opcional: página personalizada de login
   },
