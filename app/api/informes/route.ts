@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     const nombresPlatos = data.map((plato) => plato.Nombre_plato)
 
-    const response = await executeInform(data, mesInformes, informesCategory)
+    const response = await executeInform(data)
 
     //response tiene que crear el informe en mongodb
 
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// 📌 PUT: Actualizar un plato por ID
+// 📌 PUT: ACTUALIZAR INFORME: POR HACER: DE REPENTE ELIMINARLO PORQUE SI ACTUALIZAS UN INFORME CAMBIA EL RESULTADO
 export async function PUT(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -70,7 +70,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// 📌 DELETE: Eliminar un plato por ID
+// 📌 DELETE: Eliminar un INFORME: POR HACER 
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

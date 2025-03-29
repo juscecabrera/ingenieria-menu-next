@@ -1,24 +1,27 @@
 'use client'
 
-// import { useState } from "react";
+
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+
 
 type informSpecsType = {
+    'userId': string
     'Mes_informes': string
     'Informes_category': string
 }
 
-
 interface InformesCreationProps {
-  setInformesData: (informesData: any) => void; //arreglar esto
-  setShowModal: (showModal: boolean) => void;
-  refreshButton: () => void;
-  informSpecs: informSpecsType;
-  setInformSpecs: (informSpecs: any) => void //arreglar esto
-
+    setShowModal: (showModal : boolean) => void
 }
 
-
-const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refreshButton, setInformesData, informSpecs, setInformSpecs  }) => {
+const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal }) => {
+  const { data: session } = useSession();
+  const [informSpecs, setInformSpecs] = useState<informSpecsType>({
+    userId: session?.user?.id || '',
+    Mes_informes: '',
+    Informes_category: ''
+  });
 
   /*
   1. Mandar el mes y la categoria de informes
@@ -44,10 +47,10 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
 
       const data = await response.json();
 
-      setInformesData((prev: any) => data.data); //arreglar el type
-
+    //Aqui tiene que redirigir a InformesResults con el nuevo informe que acaba de crear
+      //
+      //
       setTimeout(() => {
-        refreshButton();
         setShowModal(false);
       }, 400)
       
@@ -58,7 +61,6 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal, refres
 
   const closeModal = () => {
     setShowModal(false);
-    refreshButton();
   };
 
   

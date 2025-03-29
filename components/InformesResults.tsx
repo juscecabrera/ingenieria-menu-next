@@ -1,8 +1,6 @@
 import React from 'react'
 
 const InformesResults = ({ informesData }: any) => {
-  
-
   const nombresPlato = informesData[0] || []
 
   const dataTable = informesData[1] || {}

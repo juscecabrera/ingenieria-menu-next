@@ -1,4 +1,3 @@
-import Plate from "@/models/plate";
 
 //Valor de Venta = precio final sin impuestos ni recargo por consumo
 interface PlateStructure {
@@ -21,7 +20,7 @@ interface PlateStructure {
 }
 
 
-export const executeInform = async (data : PlateStructure[], mesInformes: string, informesCategory: string) => {
+export const executeInform = async (data : PlateStructure[]) => {
     // 1. Recibir data
     // 2. Separar la data 
     // 3. Ejecutar los informes
