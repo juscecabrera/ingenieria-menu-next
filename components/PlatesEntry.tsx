@@ -8,7 +8,6 @@ interface PlatesEntryProps {
   refreshButton: () => void;
 }
 
-
 const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }) => {
   const { data: session } = useSession();
   const [plateData, setPlateData] = useState({   

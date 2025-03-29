@@ -1,31 +1,30 @@
 'use client'
+
+
 import { useState } from "react";
-/*
-    * Aqui falta hacer el mismo rework que hice en PlatesEntry para que pueda tener userId
-    *
-    *
-    * */
+import { useSession } from "next-auth/react";
+
+
 interface CostsEntryProps {
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;
 }
 
-const costsEntryTableConcepts = {
-  'Sueldo Personal de Cocina': 'Sueldo_Cocina',
-  'Sueldo Personal de Servicio': 'Sueldo_Servicio',
-  'Sueldos Administrativos': 'Sueldo_Administrativos',
-  'Alquiler (arriendo)': 'Alquiler',
-  'Depreciación': 'Depreciacion',
-  'Servicios básicos (luz, agua, teléfono)': 'Servicios_basicos',
-  'Publicidad': 'Publicidad',
-  'Internet': 'Internet',
-  'Otros': 'Otros'
-} as const;
-
-type CostField = typeof costsEntryTableConcepts[keyof typeof costsEntryTableConcepts] | 'Mes';
-
 const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) => {
-  const [costsData, setCostsData] = useState<Partial<Record<CostField, string>>>({});
+    const { data: session } = useSession();
+    const [costsData, setCostsData] = useState({
+        'userId': session?.user?.id || '',
+        'Mes': '',
+        'Sueldo_Cocina': '',
+        'Sueldo_Servicio': '',
+        'Sueldo_Administrativos': '',
+        'Alquiler': '',
+        'Depreciacion': '',
+        'Servicios_basicos': '',
+        'Publicidad': '',
+        'Internet': '',
+        'Otros': ''
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -101,21 +100,109 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
             <option value="12">Diciembre</option>
           </select>
         </fieldset>
+          
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Sueldo de Cocina</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Sueldo_Cocina'
+            value={costsData.Sueldo_Cocina || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
 
-        {Object.entries(costsEntryTableConcepts).map(([key, value]) => (
-          <fieldset key={value} className="fieldset">
-            <legend className="fieldset-legend">{key}</legend>
-            <input
-              type="number"
-              className="input border border-black"
-              name={value}
-              value={costsData[value] || ''}
-              onChange={handleChange}
-            />
-          </fieldset>
-        ))}
-      </div>
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Sueldo de Servicio</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Sueldo_Servicio'
+            value={costsData.Sueldo_Servicio || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
 
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Sueldo de Administrativos</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Sueldo_Administrativos'
+            value={costsData.Sueldo_Administrativos || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Alquiler</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Alquiler'
+            value={costsData.Alquiler || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Depreciacion</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Depreciacion'
+            value={costsData.Depreciacion || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Servicios Básicos</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Servicios_basicos'
+            value={costsData.Servicios_basicos || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Publicidad</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Publicidad'
+            value={costsData.Publicidad || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Internet</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Internet'
+            value={costsData.Internet || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">Otros</legend>
+          <input
+            type="number"
+            className="input border border-black"
+            name='Otros'
+            value={costsData.Otros || ''}
+            onChange={handleChange}
+          />
+        </fieldset>
+
+
+    </div>
       <div className="row-start-4 col-span-2 flex justify-center items-center bg-white gap-x-5">
         <button onClick={handleAddCosts} className="btn">Agregar</button>
         <button onClick={closeModal} className="btn btn-soft">Cancelar</button>
