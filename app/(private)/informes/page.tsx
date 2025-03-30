@@ -1,19 +1,10 @@
 'use client'
 
-/*
-    * Tengo que crear el componente InformesTable donde sea una tabla de todos los informes creados anteriormente
-*   Y al mismo tiempo tener otro componente donde sea el informe como tal
-    * Ahora mismo no estoy usando la ruta get de la ruta de informs con el modelo Inform, porque no estoy  mostrando los informes ya creados.
-    * Ni siquiera tengo la coleccion informs en la base de datos de MongoDB
-    *
-    * */
-
-
-
-import Link from 'next/link'
+// import Link from 'next/link'
+// import InformesResults from '@/components/InformesResults'
 import InformesCreation from '@/components/InformesCreation'
-import InformesResults from '@/components/InformesResults'
 import { useState, useEffect } from 'react'
+import { InformesTable } from '@/components/InformesTable'
 
 const Informes = () => {
   const [showModal, setshowModal] = useState(false)
@@ -21,23 +12,21 @@ const Informes = () => {
   const [informesData, setInformesData] = useState([])
 
 
-  // const fetchInformes = async () => {
-  //   try {
-  //     const response = await fetch('/api/informes')
-  //     const data = await response.json()
-  //     setInformesData(data.data)
-  //     setLoading(false)
+   const fetchInformes = async () => {
+     try {
+       const response = await fetch('/api/informes')
+       const data = await response.json()
+       setInformesData(data.data)
+       setLoading(false)
 
-  //     if (!response.ok) throw new Error('Failed to fetch costs');
-  //   } catch (error) {
-  //     console.error("Error in useEffect:", error);
-      
-  //   }
-  // } 
+       if (!response.ok) throw new Error('Failed to fetch costs');
+     } catch (error) {
+       console.error("Error in useEffect:", error);
+     }
+  } 
 
   useEffect(() => { 
-    // fetchInformes()
-    setLoading(false) //temporal
+    fetchInformes()
   }, [])
 
   const handleAddInformes = () => {
@@ -45,19 +34,13 @@ const Informes = () => {
   }
 
   const refreshButton = async () => {
-    return
-    // setLoading(true)
-    // fetchInformes()
+    setLoading(true)
+    fetchInformes()
   }
 
   return (
     <div className="p-4">
       <h2 className="font-bold text-2xl mb-2">Informes</h2>
-
-      {/*
-          <h2>Mes: {informSpecs.Mes_informes}</h2>
-      <h2>Categoria: {informSpecs.Informes_category}</h2>
-          */}
 
       <div className='my-4'>
         <button className='btn' onClick={() => handleAddInformes()}>Generar informes</button>
@@ -74,7 +57,7 @@ const Informes = () => {
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <InformesResults informesData={informesData}/>
+          : <InformesTable informesData={informesData} />
         }
       </div>
     </div>

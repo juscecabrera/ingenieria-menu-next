@@ -19,7 +19,6 @@ const InformesResults = ({ informesData }: any) => {
 
   return (
     <div>
-
       <div className='mt-2'>
         <p>Omnes: {JSON.stringify(omnes)}</p>
         <table className='border border-black table mt-2 table-lg'>

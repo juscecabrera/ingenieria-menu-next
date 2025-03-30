@@ -19,6 +19,31 @@ interface PlateStructure {
     __v: number;
 }
 
+type OmnesResult = [1 | 0, 1 | 0, -1 | 0 | 1, number]
+
+type BCGResult = ("Estrella" | "Impopular" | "Popular" | "Perdedor")[]
+
+type ADLResult = [
+    "Crecimiento" | "Introduccion" | "Madurez" | "Declinacion",
+    "Dominante" | "Fuerte" | "Favorable" | "Debil" | "Marginal"
+] //la primera categoria es Rentabilidad, la segunda es Cantidad Vendida
+
+type IRPResult = number[]
+
+type IndexPopularidadResult = number[]
+
+type CostoMargenResult = ("Selecto" | "Estandar" | "Durmiente" | "Problema")[]
+
+type MillerResult = ("Ganador" | "MarginalAlto" | "MarginalBajo" | "Perdedor")[]
+
+type UmanResult = ("Potencial" | "Bandera" | "Perdedor" | "DificilVender")[]
+
+type MerrickResult = ("A" | "B" | "C" | "D")[]
+
+type PuntoEquilibrioResult = number[]
+
+type MultiCriterioResult = number[]
+
 
 export const executeInform = async (data : PlateStructure[]) => {
     // 1. Recibir data
@@ -85,7 +110,6 @@ interface OmnesFunctionProps {
     cantidadesVendidas: number[] //array de las cantidades vendidas de los platos en el mes y categoria indicados
 }
 
-type OmnesResult = [1 | 0, 1 | 0, -1 | 0 | 1, number]
 
 const omnesFunction = async ({ valoresVentas, cantidadesVendidas} : OmnesFunctionProps): Promise<OmnesResult> => {
     //4 principios
@@ -219,7 +243,6 @@ interface BCGPopProps {
     cantidadesVendidas: number[]
 }
 
-type BCGResult = ("Estrella" | "Impopular" | "Popular" | "Perdedor")[]
 
  const BCGPop = async ({ rentabilidadPorPlato, cantidadVendidaTotalAcumulada, cantidadesVendidas }: BCGPopProps): Promise<BCGResult>  => {
     /*
@@ -272,10 +295,6 @@ interface ADLProps {
     rentabilidadPorPlato: number[]
 }
 
-type ADLResult = [
-    "Crecimiento" | "Introduccion" | "Madurez" | "Declinacion",
-    "Dominante" | "Fuerte" | "Favorable" | "Debil" | "Marginal"
-] //la primera categoria es Rentabilidad, la segunda es Cantidad Vendida
 
  const ADL = async ({ cantidadesVendidas, rentabilidadPorPlato }: ADLProps): Promise<ADLResult[]> => {
     /*
@@ -359,7 +378,6 @@ interface IRPProps {
     rentabilidadPorPlatoTotalAcumulada: number
 }
 
-type IRPResult = number[]
 
  const IRP = async ({ ventasTotalesPorPlato, ventasTotalesPorPlatoAcumuladas, rentabilidadPorPlatoTotalAcumulada, rentabilidadPorPlatoTotal }: IRPProps):Promise<IRPResult> => {
     /* 4to informe: IRP
@@ -396,7 +414,6 @@ interface IndexPopularidadProps {
     cantidadVendidaTotalAcumulada: number
 }
 
-type IndexPopularidadResult = number[]
 
  const IndexPopularidad = async ({ diasPlato, diasPlatoAcumulados, cantidadesVendidas, cantidadVendidaTotalAcumulada }: IndexPopularidadProps): Promise<IndexPopularidadResult> => {
     /*
@@ -431,7 +448,6 @@ interface CostoMargenProps {
     rentabilidadPorPlatoPromedio: number
 }
 
-type CostoMargenResult = ("Selecto" | "Estandar" | "Durmiente" | "Problema")[]
 
  const CostoMargen = async ({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: CostoMargenProps): Promise<CostoMargenResult> => {
     /*
@@ -487,7 +503,6 @@ interface MillerProps {
 
 }
 
-type MillerResult = ("Ganador" | "MarginalAlto" | "MarginalBajo" | "Perdedor")[]
 
 const Miller = async ({ costoUnitarioPorPlato, costoUnitarioPorPlatoPromedio, cantidadesVendidas, cantidadesVendidasPromedio }: MillerProps): Promise<MillerResult> => {
     /*
@@ -539,7 +554,6 @@ interface UmanProps {
     rentabilidadPorPlatoTotalPromedio: number
 }
 
-type UmanResult = ("Potencial" | "Bandera" | "Perdedor" | "DificilVender")[]
 
 const Uman = async ({ rentabilidadPorPlato, rentabilidadPorPlatoPromedio, rentabilidadPorPlatoTotal, rentabilidadPorPlatoTotalPromedio }: UmanProps) => {
     /*
@@ -587,7 +601,6 @@ interface MerrickProps {
     rentabilidadPorPlatoPromedio: number
 }
 
-type MerrickResult = ("A" | "B" | "C" | "D")[]
 
 const Merrick = async ({ cantidadesVendidas, cantidadesVendidasPromedio, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: MerrickProps): Promise<MerrickResult> => {
     /*
@@ -632,7 +645,6 @@ interface PuntoEquilibrioProps {
     rentabilidadPorPlatoPromedio: number
 }
 
-type PuntoEquilibrioResult = number[]
 
 const PuntoEquilibrio = async ({ costosFijos, rentabilidadPorPlato, rentabilidadPorPlatoPromedio }: PuntoEquilibrioProps) : Promise<PuntoEquilibrioResult> => {
     /*
@@ -721,8 +733,6 @@ interface MultiCriterioProps {
     MerrickResult: MerrickResult
 }
 
-// Tipo de retorno
-type MultiCriterioResult = number[]
 
 const multiCriterio = async ({ BCGResult, CostoMargenResult, MillerResult, UmanResult, MerrickResult }: MultiCriterioProps): Promise<MultiCriterioResult> => {
    /*

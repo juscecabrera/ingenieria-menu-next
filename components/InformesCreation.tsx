@@ -2,11 +2,10 @@
 
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
-
+import { useRouter } from "next/navigation";
+import { useInform } from "@/app/(private)/informes/context";
 
 type informSpecsType = {
-    'userId': string
     'Mes_informes': string
     'Informes_category': string
 }
@@ -16,12 +15,12 @@ interface InformesCreationProps {
 }
 
 const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal }) => {
-  const { data: session } = useSession();
   const [informSpecs, setInformSpecs] = useState<informSpecsType>({
-    userId: session?.user?.id || '',
     Mes_informes: '',
     Informes_category: ''
   });
+  const { setInformData } = useInform();
+  const router = useRouter();
 
   /*
   1. Mandar el mes y la categoria de informes
@@ -34,7 +33,6 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal }) => {
 
   const createInforms = async () => { 
     try {
-      //funciona
       const response = await fetch('/api/informes', {
         method: 'POST',
         headers: {
@@ -46,10 +44,11 @@ const InformesCreation:React.FC<InformesCreationProps> = ({ setShowModal }) => {
       if (!response.ok) throw new Error('Failed to add costs');
 
       const data = await response.json();
+     
+      setInformData(data.data); // data.data es el informe recién creado
 
-    //Aqui tiene que redirigir a InformesResults con el nuevo informe que acaba de crear
-      //
-      //
+      router.push("/informes/results");
+      
       setTimeout(() => {
         setShowModal(false);
       }, 400)
