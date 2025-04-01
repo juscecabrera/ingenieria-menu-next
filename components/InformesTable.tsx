@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useInform } from "@/app/(private)/informes/context";
-import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
 
 interface informesDataType {
+    _id: string
     Mes_informes: string
     Informes_category: string
     results: any
@@ -13,9 +13,10 @@ interface informesDataType {
 
 interface InformesTableProps {
     informesData: informesDataType[];
+    refreshButton: () => void;
 }
 
-export const InformesTable:React.FC<InformesTableProps> = ({ informesData }) => {
+export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refreshButton }) => {
   const { setInformData } = useInform();
   const router = useRouter();
 
@@ -27,9 +28,25 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData }) => 
     }
 
 
-    const deleteInform = (inform: any) => {
-        // hacer llamado al api para hacer el delete 
-       return
+    const deleteInform = async (_id: string) => {
+        try {
+            const response = await fetch(`/api/informes?id=${_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al eliminar el informe');
+            }
+            
+            refreshButton()
+        
+        } catch (error) {
+            console.error('Error en deleteInform:', error);
+            throw error; // Maneja el error como prefieras
+        }
     }
 
     const formatDate = (isoDate: string | Date) => {
@@ -60,18 +77,9 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData }) => 
                         <th>{index + 1 || ''}</th>
                         <td>{inform.Mes_informes || ''}</td>
                         <td>{inform.Informes_category || ''}</td>
-                        <td>
-                        {/*
-                        {inform.createdAt instanceof Date
-                            ? inform.createdAt.toLocaleDateString() || '' // Formatea la fecha
-                            : inform.createdAt || ''} {/* Si ya es string, lo muestra directamente */}
-
-                            {inform.createdAt ? formatDate(inform.createdAt) : '' }
-
-
-                        </td>
+                        <td>{inform.createdAt ? formatDate(inform.createdAt) : '' }</td>
                         <td><button className="btn" onClick={() => goInform(inform)}>Ver</button></td>
-                        <td><button className="btn" onClick={() => deleteInform(inform)}>Eliminar</button></td>
+                        <td><button className="btn" onClick={() => deleteInform(inform._id)}>Eliminar</button></td>
                     </tr>
                 ))}
             </tbody>

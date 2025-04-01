@@ -88,21 +88,21 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// 📌 DELETE: Eliminar un INFORME: POR HACER 
+// 📌 DELETE: Eliminar un Informe
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ message: 'ID is required' }, { status: 400 });
-
+    console.log('llega', id)
     await connectToDatabase();
-    const deletedPlate = await Plate.findByIdAndDelete(id);
+    const deletedInform = await Inform.findByIdAndDelete(id);
 
-    if (!deletedPlate) return NextResponse.json({ message: 'Plate not found' }, { status: 404 });
+    if (!deletedInform) return NextResponse.json({ message: 'Inform not found' }, { status: 404 });
 
-    return NextResponse.json({ message: 'Plate deleted successfully', data: deletedPlate }, { status: 200 });
+    return NextResponse.json({ message: 'Inform deleted successfully', data: deletedInform }, { status: 200 });
   } catch (error) {
-    console.error('❌ Error deleting plate:', error);
-    return NextResponse.json({ message: 'Error deleting plate', error }, { status: 500 });
+    console.error('❌ Error deleting inform:', error);
+    return NextResponse.json({ message: 'Error deleting inform', error }, { status: 500 });
   }
 }

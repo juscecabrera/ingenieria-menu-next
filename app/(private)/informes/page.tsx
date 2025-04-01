@@ -23,20 +23,20 @@ const Informes = () => {
      } catch (error) {
        console.error("Error in useEffect:", error);
      }
-  } 
+   } 
 
-  useEffect(() => { 
-    fetchInformes()
-  }, [])
+   useEffect(() => { 
+       fetchInformes()
+   }, [])
 
-  const handleAddInformes = () => {
-    setshowModal(prev => true)  
-  }
+   const handleAddInformes = () => {
+       setshowModal(prev => true)  
+   }
 
-  const refreshButton = async () => {
-    setLoading(true)
-    fetchInformes()
-  }
+   const refreshButton = async () => {
+       setLoading(true)
+       fetchInformes()
+   }
 
   return (
     <div className="p-4">
@@ -57,7 +57,7 @@ const Informes = () => {
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <InformesTable informesData={informesData} />
+          : <InformesTable informesData={informesData} refreshButton={refreshButton}/>
         }
       </div>
     </div>
