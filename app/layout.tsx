@@ -36,17 +36,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
+    <body
         className={nunitoSans.className}
         >
         {children}
 
-        {/*
-           <SidebarProvider>
-           <AppSidebar />
-           <SidebarTrigger />
-           </SidebarProvider>
-            */}
       </body>
     </html>
   );
