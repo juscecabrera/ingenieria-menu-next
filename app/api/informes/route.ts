@@ -6,9 +6,6 @@ import Inform from '@/models/inform';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
 
-/*
-Ponerle el modelo de Informes, no de Plates
-*/
 
 
 // 📌 POST: Crear un nuevo informe: LISTO
@@ -32,12 +29,15 @@ export async function POST(req: NextRequest) {
 
     const response = await executeInform(data)
 
+    const nombresPlatos: string[] = data.map(plate => plate.Nombre_plato);
+
     //response tiene que crear el informe en mongodb
     const newInform = new Inform({
         userId: session.user.id,
         Mes_informes: mesInformes,
         Informes_category: informesCategory,
-        results: response
+        results: response,
+        plates: nombresPlatos
     });
 
     await newInform.save();
@@ -77,14 +77,15 @@ export async function PUT(req: NextRequest) {
     if (!id) return NextResponse.json({ message: 'ID is required' }, { status: 400 });
 
     await connectToDatabase();
-    const updatedPlate = await Plate.findByIdAndUpdate(id, await req.json(), { new: true });
+    // const updatedPlate = await Plate.findByIdAndUpdate(id, await req.json(), { new: true });
+// 
+    // if (!updatedPlate) return NextResponse.json({ message: 'Plate not found' }, { status: 404 });
 
-    if (!updatedPlate) return NextResponse.json({ message: 'Plate not found' }, { status: 404 });
-
-    return NextResponse.json({ message: 'Plate updated successfully', data: updatedPlate }, { status: 200 });
+    const updatedInform = {}
+    return NextResponse.json({ message: 'Inform updated successfully', data: updatedInform }, { status: 200 });
   } catch (error) {
-    console.error('❌ Error updating plate:', error);
-    return NextResponse.json({ message: 'Error updating plate', error }, { status: 500 });
+    console.error('❌ Error updating inform:', error);
+    return NextResponse.json({ message: 'Error updating inform', error }, { status: 500 });
   }
 }
 

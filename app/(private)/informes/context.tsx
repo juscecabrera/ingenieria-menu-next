@@ -6,6 +6,7 @@ type InformData = {
   Mes_informes: string;
   Informes_category: string;
   results: any;
+  plates: string[]
 } | null;
 
 type InformContextType = {

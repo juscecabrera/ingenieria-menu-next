@@ -19,7 +19,8 @@ const InformSchema = new Schema({
         MerrickResult: { type: [String], required: true },
         PuntoEquilibrioResult: { type: [Number], required: true },
         MultiCriterioResult: { type: [Number], required: true }
-    }
+    },
+    plates: {type: [String], required: true}
 }, { timestamps: true });
 
 const Inform = models.Inform || model('Inform', InformSchema);

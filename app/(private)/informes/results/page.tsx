@@ -15,14 +15,14 @@ export default function InformesResultsPage () {
         </>
     )
   }
-  const nombresPlatos = ['Plato 1', 'Plato 2'] //data temporal 
+  
+  const nombresPlatos = informData.plates
 
   const informDataTable = [nombresPlatos, informData.results]
   return (
         <div>
             <BreadcrumbComponent />
         <h2 className="text-2xl font-bold">Resultados del Informe</h2>
-
         <p><strong>Mes:</strong> {informData.Mes_informes}</p>
         <p><strong>Categoría:</strong> {informData.Informes_category}</p>
 
