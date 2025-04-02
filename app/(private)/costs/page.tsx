@@ -58,7 +58,7 @@ const Costs = () => {
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <CostsTable costsData={costsData}/>
+          : <CostsTable costsData={costsData} refreshButtonAction={refreshButton} />
         }
       </div>
     </div>

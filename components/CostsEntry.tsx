@@ -1,16 +1,19 @@
 'use client'
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 
 interface CostsEntryProps {
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;
+  edit?: boolean;
+  costsId?: string
+  costsDataProps: any
 }
 
-const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) => {
+const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton, edit = false, costsId = '' , costsDataProps }) => {
     const { data: session } = useSession();
     const [costsData, setCostsData] = useState({
         'userId': session?.user?.id || '',
@@ -25,6 +28,14 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
         'Internet': '',
         'Otros': ''
   })
+
+  useEffect(() => {
+    if (costsDataProps) {
+        setCostsData(prev => costsDataProps)
+    } else {
+        return
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -98,6 +109,37 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
       alert(error instanceof Error ? error.message : 'Error al agregar costos');
     }
   };
+
+
+  const handleEditCosts = async () => {
+    try {
+      validateFields();
+
+      const totalCosts = calculateTotalCosts(costsData);
+      const updatedCostsData = {
+          ...costsData,
+          Total_Costos: totalCosts 
+      };
+
+      const response = await fetch(`/api/costs?id=${costsId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedCostsData),
+      });
+      
+      if (!response.ok) throw new Error('Failed to edit costs');
+      
+      setTimeout(() => {
+        refreshButton();
+        setShowModal(false);
+      }, 400);
+    } catch (error) {
+      console.error("Error in handleEditCosts:", error);
+      alert(error instanceof Error ? error.message : 'Error al editar costos');
+    }
+  }
 
   const closeModal = () => {
     setShowModal(false);
@@ -238,7 +280,12 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
 
     </div>
       <div className="row-start-4 col-span-2 flex justify-center items-center bg-white gap-x-5">
-        <button onClick={handleAddCosts} className="btn">Agregar</button>
+        
+      {edit 
+          ? <button onClick={handleEditCosts} className="btn">Confirmar Cambios</button>
+          : <button onClick={handleAddCosts} className="btn">Agregar</button>
+      }
+
         <button onClick={closeModal} className="btn btn-soft">Cancelar</button>
       </div>
     </div>

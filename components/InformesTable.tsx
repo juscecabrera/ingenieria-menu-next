@@ -75,7 +75,6 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refre
                     <th>Mes</th>
                     <th>Categoría</th>
                     <th>Fecha de creacion</th>
-                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,7 +85,6 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refre
                         <td>{inform.Informes_category || ''}</td>
                         <td>{inform.createdAt ? formatDate(inform.createdAt) : '' }</td>
                         <td><button className="btn" onClick={() => goInform(inform)}>Ver</button></td>
-                        {/* <td><button className="btn" onClick={() => deleteInform(inform._id)}>Eliminar</button></td> */}
                         <td><button className="btn" onClick={() => openModal(inform._id)}>Eliminar</button></td>
                     </tr>
                 ))}
@@ -96,7 +94,7 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refre
         {showModal && (
 
         <div className='fixed top-0 left-0 w-full h-full bg-black/20 flex justify-center items-center z-50'>
-           <ConfirmDelete informId={informId} deleteInform={deleteInform} setShowModal={setShowModal} /> 
+           <ConfirmDelete objectId={informId} deleteFunction={deleteInform} setShowModal={setShowModal} /> 
         </div>
         )}
     </>

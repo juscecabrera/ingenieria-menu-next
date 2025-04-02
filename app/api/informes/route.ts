@@ -98,7 +98,7 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ message: 'ID is required' }, { status: 400 });
-    console.log('llega', id)
+
     await connectToDatabase();
     const deletedInform = await Inform.findByIdAndDelete(id);
 
