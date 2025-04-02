@@ -57,7 +57,7 @@ const Informes = () => {
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <InformesTable informesData={informesData} refreshButton={refreshButton}/>
+          : <InformesTable informesData={informesData} refreshButtonAction={refreshButton}/>
         }
       </div>
     </div>

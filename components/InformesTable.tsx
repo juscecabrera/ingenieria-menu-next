@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useInform } from "@/app/(private)/informes/context";
+import { useState } from "react";
+import { ConfirmDelete } from "./ConfirmDelete";
 
 interface informesDataType {
     _id: string
@@ -13,13 +15,14 @@ interface informesDataType {
 
 interface InformesTableProps {
     informesData: informesDataType[];
-    refreshButton: () => void;
+    refreshButtonAction: () => void;
 }
 
-export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refreshButton }) => {
+export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refreshButtonAction }) => {
   const { setInformData } = useInform();
   const router = useRouter();
-
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [informId, setInformId] = useState<string>('')
 
     const goInform = (inform: any) => {
         setInformData(inform)
@@ -27,6 +30,10 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refre
         router.push('/informes/results')
     }
 
+    const openModal = (_id: string) => {
+        setShowModal(prev => true)
+        setInformId(_id)
+    }
 
     const deleteInform = async (_id: string) => {
         try {
@@ -41,7 +48,7 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refre
                 throw new Error('Error al eliminar el informe');
             }
             
-            refreshButton()
+            refreshButtonAction()
         
         } catch (error) {
             console.error('Error en deleteInform:', error);
@@ -79,11 +86,19 @@ export const InformesTable:React.FC<InformesTableProps> = ({ informesData, refre
                         <td>{inform.Informes_category || ''}</td>
                         <td>{inform.createdAt ? formatDate(inform.createdAt) : '' }</td>
                         <td><button className="btn" onClick={() => goInform(inform)}>Ver</button></td>
-                        <td><button className="btn" onClick={() => deleteInform(inform._id)}>Eliminar</button></td>
+                        {/* <td><button className="btn" onClick={() => deleteInform(inform._id)}>Eliminar</button></td> */}
+                        <td><button className="btn" onClick={() => openModal(inform._id)}>Eliminar</button></td>
                     </tr>
                 ))}
             </tbody>
         </table>
+
+        {showModal && (
+
+        <div className='fixed top-0 left-0 w-full h-full bg-black/20 flex justify-center items-center z-50'>
+           <ConfirmDelete informId={informId} deleteInform={deleteInform} setShowModal={setShowModal} /> 
+        </div>
+        )}
     </>
     )
 }

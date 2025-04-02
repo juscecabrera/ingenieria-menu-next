@@ -23,11 +23,11 @@ export default function InformesResultsPage () {
             <BreadcrumbComponent />
         <h2 className="text-2xl font-bold">Resultados del Informe</h2>
 
-           <p><strong>Mes:</strong> {informData.Mes_informes}</p>
-            <p><strong>Categoría:</strong> {informData.Informes_category}</p>
+        <p><strong>Mes:</strong> {informData.Mes_informes}</p>
+        <p><strong>Categoría:</strong> {informData.Informes_category}</p>
 
-            <h3 className="text-xl mt-4">Resultados:</h3>
-                <InformesResults informesData={informDataTable} />
+        <h3 className="text-xl mt-4">Resultados:</h3>
+        <InformesResults informesData={informDataTable} />
 
 
         </div>
