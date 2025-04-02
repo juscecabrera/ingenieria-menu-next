@@ -45,7 +45,7 @@ type PuntoEquilibrioResult = number[]
 type MultiCriterioResult = number[]
 
 
-export const executeInform = async (data : PlateStructure[]) => {
+export const executeInform = async (data : PlateStructure[], totalCosts: number) => {
     // 1. Recibir data
     // 2. Separar la data 
     // 3. Ejecutar los informes
@@ -73,7 +73,8 @@ export const executeInform = async (data : PlateStructure[]) => {
     const costoUnitarioPorPlato: number[] = data.map(plate => plate.Costo_plato);
     const costoUnitarioPorPlatoPromedio: number = Number((costoUnitarioPorPlato.reduce((acc, curr) => acc + curr, 0) / costoUnitarioPorPlato.length).toFixed(2)); //promedio de costoUnitarioPorPlato
 
-    const costosFijos = 14180 //artificial porque tengo que sacarlo de otros datos
+    // const costosFijos = 14180 //artificial porque tengo que sacarlo de otros datos
+    const costosFijos = totalCosts //artificial porque tengo que sacarlo de otros datos
 
     //3. Ejecutar los informes
     const omnesResult = await omnesFunction({ valoresVentas, cantidadesVendidas }) 

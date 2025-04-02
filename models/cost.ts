@@ -12,6 +12,7 @@ const costSchema = new Schema({
   Publicidad: { type: Number, default: 0 },
   Internet: { type: Number, default: 0 },
   Otros: { type: Number, default: 0 },
+  Total_Costos: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });
 

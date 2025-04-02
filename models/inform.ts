@@ -20,7 +20,8 @@ const InformSchema = new Schema({
         PuntoEquilibrioResult: { type: [Number], required: true },
         MultiCriterioResult: { type: [Number], required: true }
     },
-    plates: {type: [String], required: true}
+    plates: {type: [String], required: true},
+    Total_Costos: {type: Number, required: true}
 }, { timestamps: true });
 
 const Inform = models.Inform || model('Inform', InformSchema);

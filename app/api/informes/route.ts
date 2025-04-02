@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { executeInform } from '@/services/informesFunctions';
 import Plate from '@/models/plate';
 import Inform from '@/models/inform';
+import Cost from '@/models/cost';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
 
@@ -26,18 +27,20 @@ export async function POST(req: NextRequest) {
     const informesCategory: string = plateData.Informes_category
 
     const data = await Plate.find({ userId: session.user.id, Mes_plato: mesInformes, Categoria_plato: informesCategory })
-
-    const response = await executeInform(data)
-
     const nombresPlatos: string[] = data.map(plate => plate.Nombre_plato);
 
-    //response tiene que crear el informe en mongodb
+    const cost = await Cost.findOne({ userId: session.user.id, Mes: mesInformes })
+    const totalCosts: number = cost ? cost.Total_Costos : 0;
+
+    const response = await executeInform(data, totalCosts)
+
     const newInform = new Inform({
         userId: session.user.id,
         Mes_informes: mesInformes,
         Informes_category: informesCategory,
         results: response,
-        plates: nombresPlatos
+        plates: nombresPlatos,
+        Total_Costos: totalCosts
     });
 
     await newInform.save();

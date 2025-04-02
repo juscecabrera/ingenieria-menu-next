@@ -41,16 +41,50 @@ const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton }) 
     // Add more validation as needed
     return true;
   };
+  
+  const calculateTotalCosts = (data: typeof costsData) => {
+      const {
+          Sueldo_Cocina,
+          Sueldo_Servicio,
+          Sueldo_Administrativos,
+          Alquiler,
+          Depreciacion,
+          Servicios_basicos,
+          Publicidad,
+          Internet,
+          Otros
+      } = data;
+
+      // Convertimos los valores a número y sumamos, manejando casos donde puedan estar vacíos
+      return [
+          Sueldo_Cocina,
+          Sueldo_Servicio,
+          Sueldo_Administrativos,
+          Alquiler,
+          Depreciacion,
+          Servicios_basicos,
+          Publicidad,
+          Internet,
+          Otros
+      ].reduce((total, value) => total + (Number(value) || 0), 0);
+  };
 
   const handleAddCosts = async () => {
     try {
       validateFields();
+
+      const totalCosts = calculateTotalCosts(costsData);
+      const updatedCostsData = {
+          ...costsData,
+          Total_Costos: totalCosts 
+      };
+
       const response = await fetch('/api/costs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(costsData),
+        body: JSON.stringify(updatedCostsData),
       });
       
       if (!response.ok) throw new Error('Failed to add costs');
