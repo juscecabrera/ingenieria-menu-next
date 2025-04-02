@@ -8,16 +8,6 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
     const plateData = await req.json();
 
-    //Precio_plato = Valor_Venta + 0.18(Valor_Venta) + 0.10(Valor_Venta)
-    //Valor_Venta = Precio_plato / 1.28
-
-    plateData.Valor_Venta = plateData.Precio_plato / 1.28
-
-    plateData.Rentabilidad = plateData.Valor_Venta - plateData.Costo_plato
-
-    plateData.Rentabilidad_total = plateData.Cantidad_vendida_plato * plateData.Rentabilidad
-
-    plateData.Ventas_total = plateData.Cantidad_vendida_plato * plateData.Valor_Venta
 
     const newPlate = new Plate(plateData);
     await newPlate.save();

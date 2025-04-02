@@ -59,7 +59,7 @@ const Platos = () => {
       <div className="flex justify-center items-center w-full">
         {loading 
           ? <span className="loading loading-spinner loading-xl"></span>
-          : <PlatesTable platesData={platesData}/>
+          : <PlatesTable platesData={platesData} refreshButtonAction={refreshButton}/>
         }
       </div>
     </div>

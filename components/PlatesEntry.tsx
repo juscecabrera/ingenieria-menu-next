@@ -1,26 +1,58 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 interface PlatesEntryProps {
   setShowModal: (showModal: boolean) => void;
   refreshButton: () => void;
+  edit?: boolean;
+  platesId?: string
+  platesDataProps?: any
 }
 
-const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }) => {
+    //Precio_plato = Valor_Venta + 0.18(Valor_Venta) + 0.10(Valor_Venta)
+const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton, edit = false, platesId = '', platesDataProps }) => {
   const { data: session } = useSession();
   const [plateData, setPlateData] = useState({   
       'userId': session?.user?.id || '',
       'Mes_plato': '',
       'Categoria_plato': '',
       'Nombre_plato': '',
-      'Cantidad_vendida_plato': '',
-      'Costo_plato': '',
-      'Precio_plato': '',
-      'Dias_plato': ''
+      'Cantidad_vendida_plato': 0,
+      'Costo_plato': 0,
+      'Precio_plato': 0,
+      'Dias_plato': 0,
+      'Valor_Venta': 0,
+      'Rentabilidad': 0,
+      'Rentabilidad_total': 0,
+      'Ventas_total': 0
   });
 
+  useEffect(() => {
+    if (platesDataProps) {
+        setPlateData(prev => platesDataProps)
+    } else {
+        return
+    }
+  }, [])
+  
+  useEffect(() => {
+      setPlateData((prev) => {
+          const valorVenta = parseFloat((prev.Precio_plato / 1.28).toFixed(2));
+          const rentabilidad = parseFloat((valorVenta - prev.Costo_plato).toFixed(2));
+          const rentabilidadTotal = parseFloat((prev.Cantidad_vendida_plato * rentabilidad).toFixed(2));
+          const ventasTotal = parseFloat((prev.Cantidad_vendida_plato * valorVenta).toFixed(2));
+
+          return {
+              ...prev,
+              Valor_Venta: valorVenta,
+              Rentabilidad: rentabilidad,
+              Rentabilidad_total: rentabilidadTotal,
+              Ventas_total: ventasTotal,
+          };
+      });
+  }, [plateData.Precio_plato, plateData.Costo_plato, plateData.Cantidad_vendida_plato]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -28,6 +60,43 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
       ...prev,
       [name]: value
     }));
+
+    //aqui agregar la logica de Valor_Venta, Rentabilidad, Rentabilidad_total y Ventas_total
+    //
+    //
+    //
+    //Precio_plato = Valor_Venta + 0.18(Valor_Venta) + 0.10(Valor_Venta)
+    //Valor_Venta = Precio_plato / 1.28
+    // plateData.Valor_Venta = plateData.Precio_plato / 1.28
+    // 
+    // plateData.Rentabilidad = plateData.Valor_Venta - plateData.Costo_plato
+    // 
+    // plateData.Rentabilidad_total = plateData.Cantidad_vendida_plato * plateData.Rentabilidad
+    // 
+    // plateData.Ventas_total = plateData.Cantidad_vendida_plato * plateData.Valor_Venta
+    //
+    // if (name === 'Precio_plato' || name === 'Costo_plato' || name === 'Cantidad_vendida_plato') {
+        // setPlateData(prev => ({
+            // ...prev,
+            // 'Valor_Venta': plateData.Precio_plato / 1.28
+        // }));
+        // 
+        // setPlateData(prev => ({
+            // ...prev,
+            // 'Rentabilidad': plateData.Valor_Venta - plateData.Costo_plato
+        // }));
+        // 
+        // setPlateData(prev => ({
+            // ...prev,
+            // 'Rentabilidad_total': plateData.Cantidad_vendida_plato * plateData.Rentabilidad
+        // }));
+        // 
+        // setPlateData(prev => ({
+            // ...prev,
+            // 'Ventas_total': plateData.Cantidad_vendida_plato * plateData.Valor_Venta
+        // }));
+// 
+    // }
   };
 
   const validateFields = () => {
@@ -58,6 +127,29 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
     }
   };
 
+  const handleEditPlates = async () => {
+    try {
+      validateFields();
+
+      const response = await fetch(`/api/plates?id=${platesId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(plateData),
+      });
+      
+      if (!response.ok) throw new Error('Failed to edit plate');
+      
+      setTimeout(() => {
+        refreshButton();
+        setShowModal(false);
+      }, 400);
+    } catch (error) {
+      console.error("Error in handleEditPlates:", error);
+      alert(error instanceof Error ? error.message : 'Error al editar platos');
+    }
+  }
   const closeModal = () => {
     setShowModal(false);
     refreshButton();
@@ -124,21 +216,10 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
         <fieldset className="fieldset">
             <legend className="fieldset-legend">Cantidad Vendida</legend>
             <input 
-                type="text"
+                type="number"
                 className="input border border-black"
                 name="Cantidad_vendida_plato"
                 value={plateData.Cantidad_vendida_plato || ''}
-                onChange={handleChange}
-            />
-        </fieldset>
-
-        <fieldset className="fieldset">
-            <legend className="fieldset-legend">Costo Plato</legend>
-            <input 
-                type="number"
-                className="input border border-black"
-                name="Costo_plato"
-                value={plateData.Costo_plato || ''}
                 onChange={handleChange}
             />
         </fieldset>
@@ -154,7 +235,16 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
             />
         </fieldset>
       
-
+        <fieldset className="fieldset">
+        <legend className="fieldset-legend">Costo Plato</legend>
+        <input 
+            type="number"
+            className="input border border-black"
+            name="Costo_plato"
+            value={plateData.Costo_plato || ''}
+            onChange={handleChange}
+        />
+        </fieldset>
 
         <fieldset className="fieldset">
             <legend className="fieldset-legend">Dias en la Carta</legend>
@@ -169,10 +259,79 @@ const PlatesEntry: React.FC<PlatesEntryProps> = ({ setShowModal, refreshButton }
 
 
 
+        {/* 
+        Valores no modificables directamente que son resultados de los anteriores. Deben actualizarse en tiempo real como los anteriores. Quitar la logica del servidor y ponerlo aca
+        - Valor Venta
+        - Rentabilidad
+        - Rentabilidad Total
+        - Ventas Totales
+
+
+        //Precio_plato = Valor_Venta + 0.18(Valor_Venta) + 0.10(Valor_Venta)
+        //Valor_Venta = Precio_plato / 1.28
+        plateData.Valor_Venta = plateData.Precio_plato / 1.28
+
+        plateData.Rentabilidad = plateData.Valor_Venta - plateData.Costo_plato
+
+        plateData.Rentabilidad_total = plateData.Cantidad_vendida_plato * plateData.Rentabilidad
+
+        plateData.Ventas_total = plateData.Cantidad_vendida_plato * plateData.Valor_Venta
+
+
+        */}
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Valor Venta</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Valor_Venta"
+                value={plateData.Valor_Venta || ''}
+                disabled
+            />
+        </fieldset>
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Rentabilidad</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Rentabilidad"
+                value={plateData.Rentabilidad || ''}
+                disabled
+            />
+        </fieldset>
+        
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Rentabilidad Total</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Rentabilidad_total"
+                value={plateData.Rentabilidad_total || ''}
+                disabled
+            />
+        </fieldset>
+
+        <fieldset className="fieldset">
+            <legend className="fieldset-legend">Ventas Totales</legend>
+            <input 
+                type="number"
+                className="input border border-black"
+                name="Ventas_total"
+                value={plateData.Ventas_total || ''}
+                disabled
+            />
+        </fieldset>
+
         </div>
 
       <div className="row-start-4 col-span-2 flex justify-center items-center bg-white gap-x-5">
-        <button onClick={handleAddPlate} className="btn">Agregar</button>
+
+      {edit 
+          ? <button onClick={handleEditPlates} className="btn">Confirmar Cambios</button>
+          : <button onClick={handleAddPlate} className="btn">Agregar</button>
+      }
         <button onClick={closeModal} className="btn btn-soft">Cancelar</button>
       </div>
     </div>

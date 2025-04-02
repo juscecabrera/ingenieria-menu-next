@@ -45,6 +45,8 @@ export function NavUser({
   }
 }) {
 
+    const { isMobile } = useSidebar()
+    const router = useRouter()
     const { data: session, status } = useSession();
 
     if (status === "loading") {
@@ -54,8 +56,6 @@ export function NavUser({
     if (status === "unauthenticated") {
         return <p>No has iniciado sesión</p>;
     }
-    const { isMobile } = useSidebar()
-    const router = useRouter()
 
     const handleLogout = async () => {
         try {

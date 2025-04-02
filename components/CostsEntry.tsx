@@ -10,7 +10,7 @@ interface CostsEntryProps {
   refreshButton: () => void;
   edit?: boolean;
   costsId?: string
-  costsDataProps: any
+  costsDataProps?: any
 }
 
 const CostsEntry: React.FC<CostsEntryProps> = ({ setShowModal, refreshButton, edit = false, costsId = '' , costsDataProps }) => {
