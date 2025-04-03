@@ -67,7 +67,9 @@ export function NavUser({
             console.error("Error durante el logout:", error);
         }
     };
-
+    const handleSetting = () => {
+        router.push("/settings")
+    }
 
   return (
     <SidebarMenu>
@@ -100,7 +102,7 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={session?.user?.email} />
+                  <AvatarImage src={user.avatar} alt={session?.user?.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -113,7 +115,7 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/account")}>
                 <IconUserCircle />
                 Cuenta
               </DropdownMenuItem>
@@ -121,7 +123,7 @@ export function NavUser({
                 <IconCreditCard />
                 Pagos
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/settings")}>
                 <IconSettings />
                 Ajustes
               </DropdownMenuItem>

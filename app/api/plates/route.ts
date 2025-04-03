@@ -7,8 +7,6 @@ export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
     const plateData = await req.json();
-
-
     const newPlate = new Plate(plateData);
     await newPlate.save();
     return NextResponse.json({ message: 'Plate added successfully', data: newPlate }, { status: 201 });
@@ -23,7 +21,6 @@ export async function GET() {
   try {
     await connectToDatabase();
     const plates = await Plate.find();
-    // console.log(plates)
     return NextResponse.json({ message: 'Plates retrieved successfully', data: plates }, { status: 200 });
   } catch (error) {
     console.error('❌ Error fetching plates:', error);

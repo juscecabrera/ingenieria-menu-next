@@ -6,8 +6,8 @@ import CostsTable from '@/components/CostsTable'
 
 const Costs = () => {
   const [showModal, setShowModal] = useState(false)   
-  const [costsData, setCostsData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [costsData, setCostsData] = useState([])
 
   const fetchCosts = async () => {
     try {
@@ -27,15 +27,15 @@ const Costs = () => {
     fetchCosts()
   }, [])
 
-  const refreshButton = async () => {
-    setLoading(true)
-    fetchCosts()
-  }
 
   const handleAddCosts = () => { 
     setShowModal(!showModal)
   }    
   
+  const refreshButton = async () => {
+      setLoading(true)
+      fetchCosts()
+  }
 
   return (
     <div className="p-4">

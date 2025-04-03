@@ -6,7 +6,7 @@ import { useState } from "react"
 import CostsEntry from "./CostsEntry";
 
 interface CostsDataType {
-  _id?: string; // Opcional, se agrega al recuperar de la DB
+  _id: string; // Opcional, se agrega al recuperar de la DB
   // userId: string; // Aunque en el esquema es ObjectId, en TS se suele manejar como string
   Mes: string;
   Sueldo_Cocina: number;
@@ -28,7 +28,7 @@ interface InformesTableProps {
 }
 
 
-function CostsTable({ costsData, refreshButtonAction }: InformesTableProps) {
+function CostsTable({ costsData = [], refreshButtonAction }: InformesTableProps) {
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
     const [costsId, setCostsId] = useState<string>('-')
@@ -87,20 +87,20 @@ function CostsTable({ costsData, refreshButtonAction }: InformesTableProps) {
             </tr>
         </thead>
         <tbody>
-            {costsData?.map((costs: any, index: number) => (
+            {costsData?.map((costs, index) => (
             <tr key={index}>
-                <th>{index + 1 || '-'}</th> {/*Este es el id artificial solamente para aspectos esteticos, NO es el mismo que en las tablas de MySQL */}
-                <td>{costs.Mes  || '-'}</td>
-                <td>{costs.Sueldo_Cocina  || '-'}</td>
-                <td>{costs.Sueldo_Servicio  || '-'}</td>
-                <td>{costs.Sueldo_Administrativos  || '-'}</td>
-                <td>{costs.Alquiler  || '-'}</td>
-                <td>{costs.Depreciacion  || '-'}</td>
-                <td>{costs.Servicios_basicos  || '-'}</td>
-                <td>{costs.Publicidad  || '-'}</td>
-                <td>{costs.Internet  || '-'}</td>
-                <td>{costs.Otros  || '-'}</td>
-                <td>{costs.Total_Costos  || '-'}</td>
+                <th>{index + 1}</th> {/*Este es el id artificial solamente para aspectos esteticos, NO es el mismo que en las tablas de MySQL */}
+                <td>{costs.Mes}</td>
+                <td>{costs.Sueldo_Cocina}</td>
+                <td>{costs.Sueldo_Servicio}</td>
+                <td>{costs.Sueldo_Administrativos}</td>
+                <td>{costs.Alquiler}</td>
+                <td>{costs.Depreciacion}</td>
+                <td>{costs.Servicios_basicos}</td>
+                <td>{costs.Publicidad}</td>
+                <td>{costs.Internet}</td>
+                <td>{costs.Otros}</td>
+                <td>{costs.Total_Costos}</td>
                 <td><button className='btn' onClick={() => updateButton( costs._id, costs)}>Editar</button></td>
                 <td><button className='btn' onClick={() => openModal(costs._id)}>Eliminar</button></td>
             </tr>

@@ -24,6 +24,7 @@ export function LoginForm({
   const router = useRouter();
   const [form, setForm] = useState<LoginFormData>({ email: "", password: "" });
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,6 +32,7 @@ export function LoginForm({
 
     try {
       // Valida los datos con zod
+        setLoading(prev => true)
       loginSchema.parse(form);
 
       // Inicia sesión con NextAuth
@@ -42,10 +44,12 @@ export function LoginForm({
 
       if (result?.error) {
         setError(result.error); // Muestra el error devuelto por NextAuth
+        setLoading(prev => false)
       } else {
         router.push("/inicio"); // Redirige al inicio tras un login exitoso
       }
     } catch (err) {
+        setLoading(prev => false)
       if (err instanceof z.ZodError) {
         setError(err.errors[0].message); // Errores de validación de zod
       } else {
@@ -97,9 +101,13 @@ export function LoginForm({
           />
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit" className="hover:cursor-pointer w-full">
-          Iniciar sesión
-        </Button>
+
+        {loading 
+          ? <div className="flex flex-row w-full items-center justify-center"><span className="loading loading-spinner loading-xl"></span></div>
+          : <Button type="submit" className="hover:cursor-pointer w-full">Iniciar sesión</Button>
+        }
+
+
       </div>
       <div className="text-center text-sm">
         ¿No tiene cuenta?
