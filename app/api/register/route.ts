@@ -58,3 +58,39 @@ export async function GET() {
     return NextResponse.json({ message: "Error en el servidor", error }, { status: 500 });
   }
 }
+
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ message: "ID is required" }, { status: 400 });
+
+    const body = await req.json(); // Datos enviados desde el cliente
+    await connectToDatabase();
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: body }, // Usar $set para actualizar solo los campos enviados
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) return NextResponse.json({ message: "User not found" }, { status: 404 });
+
+    return NextResponse.json(
+      {
+        message: "User updated successfully",
+        data: {
+          id: updatedUser._id.toString(),
+          name: updatedUser.name || "",
+          email: updatedUser.email,
+          image: updatedUser.image || "",
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("❌ Error updating user:", error);
+    return NextResponse.json({ message: "Error updating user", error }, { status: 500 });
+  }
+}

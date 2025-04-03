@@ -1,84 +1,138 @@
 'use client'
 
-import { useState } from "react"
-
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 const AccountPage = () => {
-    const [userData, setUserData] = useState({
-        'Nombre': '',
-        'Apellido': '',
-        'Correo': '',
-        'Contraseña': '',
-        'Foto': ''
-    })
+  const { data: session, update } = useSession();
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    image: ''
+  });
+  const [loading, setLoading] = useState(false);
 
-    const handleChange = () => {
-        return
+  // Cargar datos iniciales solo si el estado está vacío
+  useEffect(() => {
+    if (session?.user && !userData.name) {
+      setUserData({
+        name: session.user.name || '',
+        email: session.user.email || '',
+        image: session.user.image || ''
+      });
     }
-    return (
-        <div className="p-4">
-            <h2 className="font-bold text-2xl">Cuenta</h2>
+  }, [session]);
 
-            <fieldset className="fieldset">
-                <legend className="fieldset-legend">Nombre</legend>
-                <input
-                    type="number"
-                    className="input border border-black"
-                    name='Sueldo_Cocina'
-                    value={userData.Nombre || ''}
-                    onChange={handleChange}
-                />
-            </fieldset>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-            <fieldset className="fieldset">
-                <legend className="fieldset-legend">Apellido</legend>
-                <input
-                    type="number"
-                    className="input border border-black"
-                    name='Sueldo_Cocina'
-                    value={userData.Apellido || ''}
-                    onChange={handleChange}
-                />
-            </fieldset>
+  const handleEditUser = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/register?id=${session?.user?.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update user');
+      }
 
-            <fieldset className="fieldset">
-                <legend className="fieldset-legend">Correo</legend>
-                <input
-                    type="number"
-                    className="input border border-black"
-                    name='Sueldo_Cocina'
-                    value={userData.Correo || ''}
-                    onChange={handleChange}
-                />
-            </fieldset>
+      const updatedUser = await response.json();
+      console.log("Datos devueltos por el servidor:", updatedUser);
 
-            <fieldset className="fieldset">
-                <legend className="fieldset-legend">Contraseña</legend>
-                <input
-                    type="number"
-                    className="input border border-black"
-                    name='Sueldo_Cocina'
-                    value={userData.Contraseña || ''}
-                    onChange={handleChange}
-                />
-            </fieldset>
-        
-            <fieldset className="fieldset">
-                <legend className="fieldset-legend">Foto</legend>
-                <input
-                    type="image"
-                    className="input border border-black"
-                    name='Sueldo_Cocina'
-                    value={userData.Foto || ''}
-                    onChange={handleChange}
-                />
-            </fieldset>
+      // Actualizar estado local
+      const newUserData = {
+        name: updatedUser.data.name || userData.name,
+        email: updatedUser.data.email || userData.email,
+        image: updatedUser.data.image || userData.image
+      };
+      setUserData(newUserData);
 
-            </div>
+      // Actualizar la sesión
+      await update({
+        name: newUserData.name,
+        email: newUserData.email,
+        image: newUserData.image
+      });
 
+    } catch (error) {
+      console.error("Error in handleEditUser:", error);
+      alert(error instanceof Error ? error.message : 'Error al actualizar usuario');
+      setUserData({
+        name: session?.user?.name || '',
+        email: session?.user?.email || '',
+        image: session?.user?.image || ''
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    )
-}
+  return (
+    <div className="p-4">
+      <h2 className="font-bold text-2xl">Cuenta</h2>
 
-export default AccountPage
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+        </div>
+      ) : (
+        <>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Nombre</legend>
+            <input
+              type="text"
+              className="input border border-black"
+              name="name"
+              value={userData.name}
+              onChange={handleChange}
+            />
+          </fieldset>
+
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Correo</legend>
+            <input
+              type="email"
+              className="input border border-black"
+              name="email"
+              value={userData.email}
+              onChange={handleChange}
+            />
+          </fieldset>
+
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Foto (URL)</legend>
+            <input
+              type="text"
+              className="input border border-black"
+              name="image"
+              value={userData.image}
+              onChange={handleChange}
+              placeholder="URL de la imagen"
+            />
+          </fieldset>
+
+          <button
+            onClick={handleEditUser}
+            className="btn mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+            disabled={loading}
+          >
+            Confirmar Cambios
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default AccountPage;
